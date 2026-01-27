@@ -1,96 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Dream Vault Design System
+ * Ethereal, celestial theme with deep purples, midnight blues, and soft gold accents
+ * Glass-morphism effects, floating animations, dreamy gradients
+ */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core palette - Deep celestial */
+    --background: 240 20% 6%;
+    --foreground: 240 10% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 240 18% 10%;
+    --card-foreground: 240 10% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 240 18% 12%;
+    --popover-foreground: 240 10% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Ethereal purple */
+    --primary: 270 60% 65%;
+    --primary-foreground: 240 20% 6%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Midnight blue */
+    --secondary: 220 50% 20%;
+    --secondary-foreground: 240 10% 90%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted - Deep space */
+    --muted: 240 15% 15%;
+    --muted-foreground: 240 10% 60%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Celestial gold */
+    --accent: 42 80% 60%;
+    --accent-foreground: 240 20% 6%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 240 20% 18%;
+    --input: 240 20% 15%;
+    --ring: 270 60% 65%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom Dream Vault tokens */
+    --dream-glow: 270 80% 70%;
+    --dream-shimmer: 220 70% 75%;
+    --dream-aurora: 180 60% 50%;
+    --dream-sunset: 330 70% 60%;
+    --dream-gold: 42 80% 60%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Glass effect tokens */
+    --glass-bg: 240 18% 10% / 0.6;
+    --glass-border: 240 20% 30% / 0.3;
+    --glass-shadow: 270 60% 30% / 0.2;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Gradient definitions */
+    --gradient-celestial: linear-gradient(135deg, hsl(270 60% 20%), hsl(220 50% 15%), hsl(240 20% 8%));
+    --gradient-aurora: linear-gradient(135deg, hsl(270 60% 50%), hsl(220 70% 50%), hsl(180 60% 40%));
+    --gradient-gold: linear-gradient(135deg, hsl(42 80% 50%), hsl(35 90% 60%));
+    --gradient-dream: linear-gradient(180deg, hsl(270 40% 15%) 0%, hsl(240 20% 6%) 100%);
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar tokens */
+    --sidebar-background: 240 18% 8%;
+    --sidebar-foreground: 240 10% 85%;
+    --sidebar-primary: 270 60% 65%;
+    --sidebar-primary-foreground: 240 20% 6%;
+    --sidebar-accent: 240 15% 15%;
+    --sidebar-accent-foreground: 240 10% 90%;
+    --sidebar-border: 240 20% 18%;
+    --sidebar-ring: 270 60% 65%;
   }
 }
 
@@ -100,6 +82,181 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+    background: hsl(var(--background));
+    background-image: 
+      radial-gradient(ellipse at 20% 0%, hsl(var(--dream-glow) / 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, hsl(var(--dream-shimmer) / 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, hsl(var(--dream-aurora) / 0.03) 0%, transparent 70%);
+    min-height: 100vh;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+  }
+}
+
+@layer utilities {
+  /* Glass morphism */
+  .glass {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: 
+      0 8px 32px hsl(var(--glass-shadow)),
+      inset 0 1px 0 hsl(240 20% 40% / 0.1);
+  }
+
+  .glass-card {
+    @apply glass rounded-xl;
+  }
+
+  .glass-button {
+    @apply glass rounded-lg px-4 py-2 transition-all duration-300;
+  }
+
+  .glass-button:hover {
+    background: hsl(var(--glass-bg));
+    box-shadow: 
+      0 12px 40px hsl(var(--glass-shadow)),
+      0 0 30px hsl(var(--dream-glow) / 0.15);
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.3);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 30px hsl(var(--accent) / 0.3);
+  }
+
+  .glow-subtle {
+    box-shadow: 0 0 60px hsl(var(--dream-glow) / 0.1);
+  }
+
+  /* Text gradients */
+  .text-gradient-aurora {
+    background: var(--gradient-aurora);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Shimmer animation */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--dream-shimmer) / 0.1),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Float animation */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* Pulse glow */
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { 
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+    }
+    50% { 
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.4);
+    }
+  }
+
+  /* Fade in animation */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { 
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Stagger children animation */
+  .stagger-in > * {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .stagger-in > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-in > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-in > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-in > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-in > *:nth-child(5) { animation-delay: 0.5s; }
+  .stagger-in > *:nth-child(6) { animation-delay: 0.6s; }
+
+  /* Star particle background */
+  .stars {
+    position: relative;
+  }
+
+  .stars::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, hsl(var(--foreground) / 0.3), transparent),
+      radial-gradient(2px 2px at 40px 70px, hsl(var(--foreground) / 0.2), transparent),
+      radial-gradient(1px 1px at 90px 40px, hsl(var(--foreground) / 0.4), transparent),
+      radial-gradient(2px 2px at 130px 80px, hsl(var(--foreground) / 0.2), transparent),
+      radial-gradient(1px 1px at 160px 120px, hsl(var(--foreground) / 0.3), transparent);
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    pointer-events: none;
+  }
+
+  /* Dream category colors */
+  .dream-personal { --dream-color: 270 60% 65%; }
+  .dream-career { --dream-color: 220 70% 60%; }
+  .dream-health { --dream-color: 150 60% 50%; }
+  .dream-financial { --dream-color: 42 80% 55%; }
+  .dream-creative { --dream-color: 330 70% 60%; }
+  .dream-spiritual { --dream-color: 280 50% 70%; }
+  .dream-relationships { --dream-color: 350 70% 60%; }
+  .dream-adventure { --dream-color: 25 80% 55%; }
 }
