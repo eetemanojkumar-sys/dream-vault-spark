@@ -21,12 +21,14 @@ import {
   Loader2,
   BookOpen,
   ImageIcon,
-  RefreshCw
+  RefreshCw,
+  Share2
 } from "lucide-react";
 import { DreamDialog } from "@/components/dreams/DreamDialog";
+import { ShareDreamDialog } from "@/components/dreams/ShareDreamDialog";
 import type { Tables } from "@/integrations/supabase/types";
 
-type Dream = Tables<"dreams">;
+type Dream = Tables<"dreams"> & { is_public?: boolean; share_token?: string };
 type Milestone = Tables<"milestones">;
 
 const DreamDetail = () => {
@@ -38,6 +40,7 @@ const DreamDetail = () => {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [newMilestone, setNewMilestone] = useState("");
   const [aiInsight, setAiInsight] = useState<{ type: string; content: string } | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
@@ -290,6 +293,15 @@ const DreamDetail = () => {
           </Button>
         </Link>
         <div className="flex-1" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setShareDialogOpen(true)}
+          className={dream.is_public ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+          title={dream.is_public ? "Shared publicly" : "Share dream"}
+        >
+          <Share2 className="w-5 h-5" />
+        </Button>
         <Button
           variant="ghost"
           size="icon"
@@ -594,6 +606,14 @@ const DreamDetail = () => {
           setDialogOpen(false);
           fetchData();
         }}
+      />
+
+      {/* Share Dialog */}
+      <ShareDreamDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        dream={dream}
+        onUpdate={fetchData}
       />
     </div>
   );
