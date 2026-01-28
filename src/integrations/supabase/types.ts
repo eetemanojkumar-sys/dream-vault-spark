@@ -22,7 +22,9 @@ export type Database = {
           id: string
           image_url: string | null
           is_favorite: boolean
+          is_public: boolean
           priority: Database["public"]["Enums"]["dream_priority"]
+          share_token: string | null
           status: Database["public"]["Enums"]["dream_status"]
           tags: string[] | null
           target_date: string | null
@@ -37,7 +39,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_favorite?: boolean
+          is_public?: boolean
           priority?: Database["public"]["Enums"]["dream_priority"]
+          share_token?: string | null
           status?: Database["public"]["Enums"]["dream_status"]
           tags?: string[] | null
           target_date?: string | null
@@ -52,7 +56,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_favorite?: boolean
+          is_public?: boolean
           priority?: Database["public"]["Enums"]["dream_priority"]
+          share_token?: string | null
           status?: Database["public"]["Enums"]["dream_status"]
           tags?: string[] | null
           target_date?: string | null
@@ -167,7 +173,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_share_token: { Args: never; Returns: string }
     }
     Enums: {
       dream_category:
