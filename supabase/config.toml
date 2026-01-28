@@ -1,1 +1,10 @@
 project_id = "jwvloxymtnauraqqgtlq"
+
+[functions.dream-insights]
+verify_jwt = false
+
+[functions.dream-story]
+verify_jwt = false
+
+[functions.dream-image]
+verify_jwt = false
