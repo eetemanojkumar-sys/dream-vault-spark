@@ -10,6 +10,9 @@ import Dashboard from "./pages/Dashboard";
 import Dreams from "./pages/Dreams";
 import DreamDetail from "./pages/DreamDetail";
 import SharedDream from "./pages/SharedDream";
+import Explore from "./pages/Explore";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +31,9 @@ const App = () => (
             <Route path="/dreams" element={<Dreams />} />
             <Route path="/dreams/:id" element={<DreamDetail />} />
             <Route path="/shared/:token" element={<SharedDream />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

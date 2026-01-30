@@ -14,6 +14,70 @@ export type Database = {
   }
   public: {
     Tables: {
+      dream_comments: {
+        Row: {
+          content: string
+          created_at: string
+          dream_id: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          dream_id: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          dream_id?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dream_comments_dream_id_fkey"
+            columns: ["dream_id"]
+            isOneToOne: false
+            referencedRelation: "dreams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dream_likes: {
+        Row: {
+          created_at: string
+          dream_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dream_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dream_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dream_likes_dream_id_fkey"
+            columns: ["dream_id"]
+            isOneToOne: false
+            referencedRelation: "dreams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dreams: {
         Row: {
           category: Database["public"]["Enums"]["dream_category"]
@@ -65,6 +129,27 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
         }
         Relationships: []
       }
@@ -144,24 +229,30 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
           id: string
+          is_public: boolean
           name: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           id?: string
+          is_public?: boolean
           name?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           id?: string
+          is_public?: boolean
           name?: string | null
           updated_at?: string
           user_id?: string
