@@ -13,7 +13,10 @@ import {
   LogOut,
   Star,
   Clock,
-  Flame
+  Flame,
+  Compass,
+  Settings,
+  User
 } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -128,14 +131,31 @@ const Dashboard = () => {
             <p className="text-sm text-muted-foreground">Welcome back, {profile?.name || "Dreamer"}</p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleSignOut}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <LogOut className="w-5 h-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link to="/explore">
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+              <Compass className="w-5 h-5" />
+            </Button>
+          </Link>
+          <Link to={`/profile/${user?.id}`}>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+              <User className="w-5 h-5" />
+            </Button>
+          </Link>
+          <Link to="/settings">
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+              <Settings className="w-5 h-5" />
+            </Button>
+          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleSignOut}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="w-5 h-5" />
+          </Button>
+        </div>
       </header>
 
       {/* Stats Grid */}
