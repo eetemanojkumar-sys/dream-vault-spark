@@ -50,7 +50,7 @@ Write the story as if the dreamer is living their accomplished dream. Include se
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        max_tokens: 800,
+        max_completion_tokens: 800,
       }),
     });
 
