@@ -45,12 +45,12 @@ Write the story as if the dreamer is living their accomplished dream. Include se
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openai/gpt-5-mini",
+        model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        max_completion_tokens: 800,
+        max_tokens: 800,
       }),
     });
 
@@ -73,6 +73,7 @@ Write the story as if the dreamer is living their accomplished dream. Include se
     }
 
     const data = await response.json();
+    console.log("AI Response:", JSON.stringify(data));
     const story = data.choices?.[0]?.message?.content || "Unable to generate story at this time.";
 
     console.log("Story generated successfully");
