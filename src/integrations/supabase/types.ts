@@ -90,6 +90,7 @@ export type Database = {
           priority: Database["public"]["Enums"]["dream_priority"]
           share_token: string | null
           status: Database["public"]["Enums"]["dream_status"]
+          story: string | null
           tags: string[] | null
           target_date: string | null
           title: string
@@ -107,6 +108,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["dream_priority"]
           share_token?: string | null
           status?: Database["public"]["Enums"]["dream_status"]
+          story?: string | null
           tags?: string[] | null
           target_date?: string | null
           title: string
@@ -124,6 +126,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["dream_priority"]
           share_token?: string | null
           status?: Database["public"]["Enums"]["dream_status"]
+          story?: string | null
           tags?: string[] | null
           target_date?: string | null
           title?: string
