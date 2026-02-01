@@ -82,6 +82,7 @@ const DreamDetail = () => {
       }
 
       setDream(dreamData);
+      setStory(dreamData.story || null);
 
       const { data: milestonesData } = await supabase
         .from("milestones")
@@ -184,7 +185,6 @@ const DreamDetail = () => {
     if (!dream) return;
 
     setStoryLoading(true);
-    setStory(null);
 
     try {
       const response = await supabase.functions.invoke("dream-story", {
@@ -201,7 +201,19 @@ const DreamDetail = () => {
         throw new Error(response.error.message);
       }
 
-      setStory(response.data.story);
+      const generatedStory = response.data.story;
+      
+      // Save story to database
+      const { error: updateError } = await supabase
+        .from("dreams")
+        .update({ story: generatedStory })
+        .eq("id", dream.id);
+
+      if (updateError) {
+        console.error("Failed to save story:", updateError);
+      }
+
+      setStory(generatedStory);
       toast({
         title: "Story Generated!",
         description: "Your dream has been transformed into an immersive narrative.",
