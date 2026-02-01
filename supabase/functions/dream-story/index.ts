@@ -45,16 +45,19 @@ Write the story as if the dreamer is living their accomplished dream. Include se
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "openai/gpt-5-mini",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        max_tokens: 800,
+        max_completion_tokens: 2500,
       }),
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("AI gateway error:", response.status, errorText);
+      
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
@@ -67,16 +70,18 @@ Write the story as if the dreamer is living their accomplished dream. Include se
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      const text = await response.text();
-      console.error("AI gateway error:", response.status, text);
       throw new Error("AI service temporarily unavailable");
     }
 
     const data = await response.json();
-    console.log("AI Response:", JSON.stringify(data));
-    const story = data.choices?.[0]?.message?.content || "Unable to generate story at this time.";
+    console.log("AI Response structure:", JSON.stringify(data, null, 2));
+    
+    // Handle both OpenAI and Gemini response formats
+    const story = data.choices?.[0]?.message?.content 
+      || data.choices?.[0]?.text 
+      || "Unable to generate story at this time.";
 
-    console.log("Story generated successfully");
+    console.log("Story generated successfully, length:", story.length);
 
     return new Response(
       JSON.stringify({ story }),
