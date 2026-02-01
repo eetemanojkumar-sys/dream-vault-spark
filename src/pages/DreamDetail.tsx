@@ -22,7 +22,11 @@ import {
   BookOpen,
   ImageIcon,
   RefreshCw,
-  Share2
+  Share2,
+  Volume2,
+  VolumeX,
+  Pause,
+  Play
 } from "lucide-react";
 import { DreamDialog } from "@/components/dreams/DreamDialog";
 import { ShareDreamDialog } from "@/components/dreams/ShareDreamDialog";
@@ -47,6 +51,8 @@ const DreamDetail = () => {
   const [story, setStory] = useState<string | null>(null);
   const [storyLoading, setStoryLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -210,6 +216,67 @@ const DreamDetail = () => {
     } finally {
       setStoryLoading(false);
     }
+  };
+
+  const speakStory = () => {
+    if (!story) return;
+
+    if (isSpeaking && !isPaused) {
+      // Pause speaking
+      window.speechSynthesis.pause();
+      setIsPaused(true);
+      return;
+    }
+
+    if (isPaused) {
+      // Resume speaking
+      window.speechSynthesis.resume();
+      setIsPaused(false);
+      return;
+    }
+
+    // Start new speech
+    window.speechSynthesis.cancel(); // Cancel any existing speech
+    const utterance = new SpeechSynthesisUtterance(story);
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    
+    // Try to get a nice voice
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => 
+      v.name.includes('Samantha') || 
+      v.name.includes('Google') || 
+      v.name.includes('Natural') ||
+      v.lang.startsWith('en')
+    );
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+      toast({
+        title: "Speech Error",
+        description: "Could not read the story aloud. Please try again.",
+        variant: "destructive",
+      });
+    };
+
+    setIsSpeaking(true);
+    setIsPaused(false);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setIsPaused(false);
   };
 
   const generateImage = async () => {
@@ -413,9 +480,37 @@ const DreamDetail = () => {
 
           {story && !storyLoading && (
             <div className="p-4 rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20">
-              <p className="text-foreground leading-relaxed whitespace-pre-wrap italic">
-                "{story}"
-              </p>
+              <div className="flex items-start gap-3">
+                <div className="flex flex-col gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={speakStory}
+                    className="h-8 w-8 text-primary hover:bg-primary/20"
+                    title={isSpeaking ? (isPaused ? "Resume" : "Pause") : "Read aloud"}
+                  >
+                    {isSpeaking ? (
+                      isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />
+                    ) : (
+                      <Volume2 className="w-4 h-4" />
+                    )}
+                  </Button>
+                  {isSpeaking && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={stopSpeaking}
+                      className="h-8 w-8 text-destructive hover:bg-destructive/20"
+                      title="Stop"
+                    >
+                      <VolumeX className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+                <p className="text-foreground leading-relaxed whitespace-pre-wrap italic flex-1">
+                  "{story}"
+                </p>
+              </div>
             </div>
           )}
 
