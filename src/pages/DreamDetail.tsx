@@ -28,8 +28,10 @@ import {
   Pause,
   Play
 } from "lucide-react";
+ import { Bot } from "lucide-react";
 import { DreamDialog } from "@/components/dreams/DreamDialog";
 import { ShareDreamDialog } from "@/components/dreams/ShareDreamDialog";
+ import { StoryAgentDialog } from "@/components/dreams/StoryAgentDialog";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Dream = Tables<"dreams"> & { is_public?: boolean; share_token?: string };
@@ -53,6 +55,7 @@ const DreamDetail = () => {
   const [imageLoading, setImageLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+   const [storyAgentOpen, setStoryAgentOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -480,6 +483,16 @@ const DreamDetail = () => {
               )}
             </Button>
           </div>
+           
+           <Button
+             variant="outline"
+             size="sm"
+             onClick={() => setStoryAgentOpen(true)}
+             className="w-full border-secondary/50 hover:bg-secondary/10"
+           >
+             <Bot className="w-4 h-4 mr-2" />
+             Chat with Story Agent
+           </Button>
 
           {storyLoading && (
             <div className="flex items-center justify-center p-8">
@@ -722,6 +735,14 @@ const DreamDetail = () => {
         dream={dream}
         onUpdate={fetchData}
       />
+       
+       {/* Story Agent Dialog */}
+       <StoryAgentDialog
+         open={storyAgentOpen}
+         onOpenChange={setStoryAgentOpen}
+         dream={dream}
+         onStorySaved={fetchData}
+       />
     </div>
   );
 };
