@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star, Clock, Flame, TrendingUp, MoreVertical, Edit2, Trash2 } from "lucide-react";
+import { Star, Clock, Flame, TrendingUp, MoreVertical, Edit2, Trash2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -112,16 +112,24 @@ export function DreamCard({ dream, onEdit, onDelete, onToggleFavorite }: DreamCa
         <h3 className="font-display text-lg text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2">
           {dream.title}
         </h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
           {dream.description || "No description"}
         </p>
 
-        {dream.target_date && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="w-3 h-3" />
-            <span>Target: {new Date(dream.target_date).toLocaleDateString()}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          {dream.story && (
+            <div className="flex items-center gap-1 text-primary">
+              <BookOpen className="w-3 h-3" />
+              <span>Story</span>
+            </div>
+          )}
+          {dream.target_date && (
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>Target: {new Date(dream.target_date).toLocaleDateString()}</span>
+            </div>
+          )}
+        </div>
       </Link>
     </div>
   );
