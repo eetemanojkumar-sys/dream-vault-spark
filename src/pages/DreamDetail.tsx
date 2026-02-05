@@ -26,9 +26,10 @@ import {
   Volume2,
   VolumeX,
   Pause,
-  Play
+   Play,
+   Bot,
+   Send
 } from "lucide-react";
- import { Bot } from "lucide-react";
 import { DreamDialog } from "@/components/dreams/DreamDialog";
 import { ShareDreamDialog } from "@/components/dreams/ShareDreamDialog";
  import { StoryAgentDialog } from "@/components/dreams/StoryAgentDialog";
