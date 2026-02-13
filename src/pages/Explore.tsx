@@ -39,6 +39,7 @@ interface PublicDream {
 const Explore = () => {
   const { user } = useAuth();
   const [dreams, setDreams] = useState<PublicDream[]>([]);
+  const [trendingDreams, setTrendingDreams] = useState<PublicDream[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -118,6 +119,15 @@ const Explore = () => {
       }));
 
       setDreams(enrichedDreams);
+      
+      // Sort by total engagement (likes + reactions) for trending
+      const trendingDreamsData = [...enrichedDreams].sort((a, b) => {
+        const aEngagement = a.likes_count + (likesCountMap.get(a.id) || 0);
+        const bEngagement = b.likes_count + (likesCountMap.get(b.id) || 0);
+        return bEngagement - aEngagement;
+      }).slice(0, 12);
+      
+      setTrendingDreams(trendingDreamsData);
     } catch (error) {
       console.error("Error fetching public dreams:", error);
     } finally {
@@ -205,6 +215,7 @@ const Explore = () => {
       <Tabs defaultValue="dreams" className="fade-in" style={{ animationDelay: "0.1s" }}>
         <TabsList className="glass mb-6 w-full md:w-auto">
           <TabsTrigger value="dreams">Dreams</TabsTrigger>
+          <TabsTrigger value="trending">Trending</TabsTrigger>
           {user && <TabsTrigger value="activity">Activity</TabsTrigger>}
           <TabsTrigger value="people">People</TabsTrigger>
         </TabsList>
@@ -267,6 +278,27 @@ const Explore = () => {
           ))}
         </div>
       )}
+        </TabsContent>
+
+        <TabsContent value="trending">
+          {trendingDreams.length === 0 ? (
+            <div className="glass-card p-12 text-center fade-in" style={{ animationDelay: "0.2s" }}>
+              <Sparkles className="w-16 h-16 text-primary/50 mx-auto mb-4" />
+              <h3 className="text-xl font-display mb-2">No trending dreams yet</h3>
+              <p className="text-muted-foreground">Dreams with the most reactions and likes appear here</p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-in">
+              {trendingDreams.map((dream) => (
+                <ExploreDreamCard
+                  key={dream.id}
+                  dream={dream}
+                  onLike={handleLike}
+                  isAuthenticated={!!user}
+                />
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         {user && (
