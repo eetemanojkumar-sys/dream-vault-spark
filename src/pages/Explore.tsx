@@ -14,6 +14,9 @@ import {
   User
 } from "lucide-react";
 import { ExploreDreamCard } from "@/components/social/ExploreDreamCard";
+import { UserSearch } from "@/components/social/UserSearch";
+import { ActivityFeed } from "@/components/social/ActivityFeed";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface PublicDream {
   id: string;
@@ -198,34 +201,43 @@ const Explore = () => {
         )}
       </header>
 
-      {/* Search & Filters */}
-      <div className="glass-card p-4 mb-6 fade-in" style={{ animationDelay: "0.1s" }}>
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search dreams..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-muted/50 border-border/50"
-            />
+      {/* Tabs: Dreams / Activity / People */}
+      <Tabs defaultValue="dreams" className="fade-in" style={{ animationDelay: "0.1s" }}>
+        <TabsList className="glass mb-6 w-full md:w-auto">
+          <TabsTrigger value="dreams">Dreams</TabsTrigger>
+          {user && <TabsTrigger value="activity">Activity</TabsTrigger>}
+          <TabsTrigger value="people">People</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="dreams">
+          {/* Search & Filters */}
+          <div className="glass-card p-4 mb-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search dreams..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-muted/50 border-border/50"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="bg-muted/50 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:border-primary outline-none"
+                >
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat === "all" ? "All Categories" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="bg-muted/50 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:border-primary outline-none"
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat === "all" ? "All Categories" : cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
 
       {/* Dreams Grid */}
       {filteredDreams.length === 0 ? (
@@ -255,6 +267,24 @@ const Explore = () => {
           ))}
         </div>
       )}
+        </TabsContent>
+
+        {user && (
+          <TabsContent value="activity">
+            <div className="glass-card p-6">
+              <h2 className="text-xl font-display text-foreground mb-4">Following Activity</h2>
+              <ActivityFeed />
+            </div>
+          </TabsContent>
+        )}
+
+        <TabsContent value="people">
+          <div className="glass-card p-6">
+            <h2 className="text-xl font-display text-foreground mb-4">Find Dreamers</h2>
+            <UserSearch />
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

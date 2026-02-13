@@ -18,6 +18,7 @@ import {
   Settings,
   User
 } from "lucide-react";
+import { NotificationBell } from "@/components/social/NotificationBell";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Dream = Tables<"dreams">;
@@ -132,6 +133,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <NotificationBell />
           <Link to="/explore">
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
               <Compass className="w-5 h-5" />

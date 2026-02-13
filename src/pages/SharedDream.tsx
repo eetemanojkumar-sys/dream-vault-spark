@@ -16,6 +16,7 @@ import {
   User
 } from "lucide-react";
 import { CommentSection } from "@/components/social/CommentSection";
+import { DreamReactions } from "@/components/social/DreamReactions";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Dream = Tables<"dreams"> & { is_public?: boolean; share_token?: string };
@@ -321,6 +322,12 @@ const SharedDream = () => {
             </div>
           </div>
         )}
+
+        {/* Reactions */}
+        <div className="glass-card p-6 md:p-8 mb-6 fade-in" style={{ animationDelay: "0.25s" }}>
+          <h3 className="text-lg font-display text-foreground mb-3">Reactions</h3>
+          <DreamReactions dreamId={dream.id} />
+        </div>
 
         {/* Comments Section */}
         <div className="glass-card p-6 md:p-8 mb-6 fade-in" style={{ animationDelay: "0.3s" }}>

@@ -78,6 +78,38 @@ export type Database = {
           },
         ]
       }
+      dream_reactions: {
+        Row: {
+          created_at: string
+          dream_id: string
+          id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dream_id: string
+          id?: string
+          reaction: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dream_id?: string
+          id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dream_reactions_dream_id_fkey"
+            columns: ["dream_id"]
+            isOneToOne: false
+            referencedRelation: "dreams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dreams: {
         Row: {
           category: Database["public"]["Enums"]["dream_category"]
