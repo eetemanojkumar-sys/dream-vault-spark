@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -44,9 +44,65 @@ const Explore = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
+  // Recompute trending from current dreams state
+  const recomputeTrending = useCallback((currentDreams: PublicDream[]) => {
+    const sorted = [...currentDreams]
+      .sort((a, b) => b.likes_count - a.likes_count)
+      .slice(0, 12);
+    setTrendingDreams(sorted);
+  }, []);
+
   useEffect(() => {
     fetchPublicDreams();
   }, [user]);
+
+  // Real-time subscriptions for likes and reactions
+  useEffect(() => {
+    const channel = supabase
+      .channel("explore-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "dream_likes" },
+        (payload) => {
+          setDreams((prev) => {
+            let updated: PublicDream[];
+            if (payload.eventType === "INSERT") {
+              updated = prev.map((d) =>
+                d.id === payload.new.dream_id
+                  ? { ...d, likes_count: d.likes_count + 1 }
+                  : d
+              );
+            } else if (payload.eventType === "DELETE") {
+              updated = prev.map((d) =>
+                d.id === payload.old.dream_id
+                  ? { ...d, likes_count: Math.max(0, d.likes_count - 1) }
+                  : d
+              );
+            } else {
+              updated = prev;
+            }
+            recomputeTrending(updated);
+            return updated;
+          });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "dream_reactions" },
+        (payload) => {
+          // Reactions affect trending score — just re-sort trending
+          setDreams((prev) => {
+            recomputeTrending(prev);
+            return prev;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [recomputeTrending]);
 
   const fetchPublicDreams = async () => {
     try {
@@ -119,15 +175,7 @@ const Explore = () => {
       }));
 
       setDreams(enrichedDreams);
-      
-      // Sort by total engagement (likes + reactions) for trending
-      const trendingDreamsData = [...enrichedDreams].sort((a, b) => {
-        const aEngagement = a.likes_count + (likesCountMap.get(a.id) || 0);
-        const bEngagement = b.likes_count + (likesCountMap.get(b.id) || 0);
-        return bEngagement - aEngagement;
-      }).slice(0, 12);
-      
-      setTrendingDreams(trendingDreamsData);
+      recomputeTrending(enrichedDreams);
     } catch (error) {
       console.error("Error fetching public dreams:", error);
     } finally {
