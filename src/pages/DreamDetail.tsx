@@ -20,7 +20,6 @@ import {
   Rocket,
   Loader2,
   BookOpen,
-  ImageIcon,
   RefreshCw,
   Share2,
   Volume2,
@@ -53,7 +52,6 @@ const DreamDetail = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [story, setStory] = useState<string | null>(null);
   const [storyLoading, setStoryLoading] = useState(false);
-  const [imageLoading, setImageLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
    const [storyAgentOpen, setStoryAgentOpen] = useState(false);
@@ -295,45 +293,6 @@ const DreamDetail = () => {
     setIsPaused(false);
   };
 
-  const generateImage = async () => {
-    if (!dream) return;
-
-    setImageLoading(true);
-
-    try {
-      const response = await supabase.functions.invoke("dream-image", {
-        body: {
-          dreamId: dream.id,
-          dream: {
-            title: dream.title,
-            description: dream.description,
-            category: dream.category,
-          },
-        },
-      });
-
-      if (response.error) {
-        throw new Error(response.error.message);
-      }
-
-      // Refresh dream data to get the new image URL
-      fetchData();
-      toast({
-        title: "Image Generated!",
-        description: "A visual representation of your dream has been created.",
-      });
-    } catch (error) {
-      console.error("Image generation error:", error);
-      toast({
-        title: "Image Generation Failed",
-        description: error instanceof Error ? error.message : "Could not generate image",
-        variant: "destructive",
-      });
-    } finally {
-      setImageLoading(false);
-    }
-  };
-
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -450,9 +409,8 @@ const DreamDetail = () => {
         )}
       </div>
 
-      {/* AI Story Narrator & Image Generator */}
-      <div className="grid md:grid-cols-2 gap-6 mb-6">
-        {/* Story Narrator */}
+      {/* AI Story Narrator */}
+      <div className="mb-6">
         <div className="glass-card p-6 fade-in" style={{ animationDelay: "0.15s" }}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -489,7 +447,7 @@ const DreamDetail = () => {
              variant="outline"
              size="sm"
              onClick={() => setStoryAgentOpen(true)}
-             className="w-full border-secondary/50 hover:bg-secondary/10"
+             className="w-full border-secondary/50 hover:bg-secondary/10 mb-4"
            >
              <Bot className="w-4 h-4 mr-2" />
              Chat with Story Agent
@@ -546,68 +504,6 @@ const DreamDetail = () => {
               <p className="text-muted-foreground text-sm">
                 Transform your dream into an immersive first-person narrative
               </p>
-            </div>
-          )}
-        </div>
-
-        {/* Image Generator */}
-        <div className="glass-card p-6 fade-in" style={{ animationDelay: "0.2s" }}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <ImageIcon className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-display text-foreground">AI Dream Visualizer</h2>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={generateImage}
-              disabled={imageLoading}
-              className="border-primary/50 hover:bg-primary/10"
-            >
-              {imageLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
-                </>
-              ) : dream.image_url ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Regenerate
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Generate Image
-                </>
-              )}
-            </Button>
-          </div>
-
-          {imageLoading && (
-            <div className="flex items-center justify-center p-8">
-              <div className="text-center">
-                <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-3" />
-                <p className="text-muted-foreground text-sm">Visualizing your dream...</p>
-              </div>
-            </div>
-          )}
-
-          {!imageLoading && !dream.image_url && (
-            <div className="p-8 text-center border border-dashed border-muted rounded-lg">
-              <ImageIcon className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              <p className="text-muted-foreground text-sm">
-                Generate a dreamy, ethereal visualization of your dream
-              </p>
-            </div>
-          )}
-
-          {!imageLoading && dream.image_url && (
-            <div className="rounded-lg overflow-hidden border border-primary/20">
-              <img 
-                src={dream.image_url} 
-                alt={dream.title} 
-                className="w-full h-48 object-cover"
-              />
             </div>
           )}
         </div>
