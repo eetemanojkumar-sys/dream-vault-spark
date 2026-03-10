@@ -443,15 +443,15 @@ const DreamDetail = () => {
             </Button>
           </div>
            
-           <Button
-             variant="outline"
-             size="sm"
-             onClick={() => setStoryAgentOpen(true)}
-             className="w-full border-secondary/50 hover:bg-secondary/10 mb-4"
-           >
-             <Bot className="w-4 h-4 mr-2" />
-             Chat with Story Agent
-           </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStoryGPTOpen(true)}
+              className="w-full border-secondary/50 hover:bg-secondary/10 mb-4"
+            >
+              <Stars className="w-4 h-4 mr-2" />
+              Chat with Story GPT
+            </Button>
 
           {storyLoading && (
             <div className="flex items-center justify-center p-8">
