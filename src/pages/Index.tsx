@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Target, Brain, Star } from "lucide-react";
+import { Sparkles, ArrowRight, Target, Brain, Star, Stars } from "lucide-react";
 import { useEffect } from "react";
 
 const Index = () => {
