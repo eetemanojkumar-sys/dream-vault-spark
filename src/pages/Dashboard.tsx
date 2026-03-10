@@ -16,7 +16,8 @@ import {
   Flame,
   Compass,
   Settings,
-  User
+  User,
+  Stars
 } from "lucide-react";
 import { NotificationBell } from "@/components/social/NotificationBell";
 import type { Tables } from "@/integrations/supabase/types";
@@ -133,6 +134,11 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Link to="/dream-gpt">
+            <Button variant="ghost" size="icon" className="text-primary hover:text-primary/80" title="Dream GPT">
+              <Stars className="w-5 h-5" />
+            </Button>
+          </Link>
           <NotificationBell />
           <Link to="/explore">
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
