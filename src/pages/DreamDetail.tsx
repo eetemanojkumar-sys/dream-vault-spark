@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { DreamDialog } from "@/components/dreams/DreamDialog";
 import { ShareDreamDialog } from "@/components/dreams/ShareDreamDialog";
- import { StoryAgentDialog } from "@/components/dreams/StoryAgentDialog";
+ import { StoryGPTDialog } from "@/components/dreams/StoryGPTDialog";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Dream = Tables<"dreams"> & { is_public?: boolean; share_token?: string };
