@@ -26,12 +26,12 @@ import {
   VolumeX,
   Pause,
    Play,
-   Bot,
+   Stars,
    Send
 } from "lucide-react";
 import { DreamDialog } from "@/components/dreams/DreamDialog";
 import { ShareDreamDialog } from "@/components/dreams/ShareDreamDialog";
- import { StoryAgentDialog } from "@/components/dreams/StoryAgentDialog";
+ import { StoryGPTDialog } from "@/components/dreams/StoryGPTDialog";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Dream = Tables<"dreams"> & { is_public?: boolean; share_token?: string };
@@ -54,7 +54,7 @@ const DreamDetail = () => {
   const [storyLoading, setStoryLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-   const [storyAgentOpen, setStoryAgentOpen] = useState(false);
+   const [storyGPTOpen, setStoryGPTOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -443,15 +443,15 @@ const DreamDetail = () => {
             </Button>
           </div>
            
-           <Button
-             variant="outline"
-             size="sm"
-             onClick={() => setStoryAgentOpen(true)}
-             className="w-full border-secondary/50 hover:bg-secondary/10 mb-4"
-           >
-             <Bot className="w-4 h-4 mr-2" />
-             Chat with Story Agent
-           </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStoryGPTOpen(true)}
+              className="w-full border-secondary/50 hover:bg-secondary/10 mb-4"
+            >
+              <Stars className="w-4 h-4 mr-2" />
+              Chat with Story GPT
+            </Button>
 
           {storyLoading && (
             <div className="flex items-center justify-center p-8">
@@ -633,13 +633,13 @@ const DreamDetail = () => {
         onUpdate={fetchData}
       />
        
-       {/* Story Agent Dialog */}
-       <StoryAgentDialog
-         open={storyAgentOpen}
-         onOpenChange={setStoryAgentOpen}
-         dream={dream}
-         onStorySaved={fetchData}
-       />
+        {/* Story GPT Dialog */}
+        <StoryGPTDialog
+          open={storyGPTOpen}
+          onOpenChange={setStoryGPTOpen}
+          dream={dream}
+          onStorySaved={fetchData}
+        />
     </div>
   );
 };
