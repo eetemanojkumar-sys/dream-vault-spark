@@ -9,5 +9,5 @@ verify_jwt = false
 [functions.dream-gpt]
 verify_jwt = false
 
-[functions.story-agent]
+[functions.story-gpt]
 verify_jwt = false
