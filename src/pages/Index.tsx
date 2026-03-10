@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Target, Brain, Star } from "lucide-react";
+import { Sparkles, ArrowRight, Target, Brain, Star, Stars } from "lucide-react";
 import { useEffect } from "react";
 
 const Index = () => {
@@ -42,7 +42,7 @@ const Index = () => {
           </p>
 
           {/* CTA */}
-          <div className="fade-in" style={{ animationDelay: "0.2s" }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 fade-in" style={{ animationDelay: "0.2s" }}>
             <Button
               size="lg"
               onClick={() => navigate("/auth")}
@@ -50,6 +50,15 @@ const Index = () => {
             >
               Begin Your Journey
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => navigate("/dream-gpt")}
+              className="text-lg px-8 py-6 group border-primary/40 hover:border-primary/80"
+            >
+              <Stars className="w-5 h-5 mr-2 text-primary" />
+              Try Dream GPT
             </Button>
           </div>
 
