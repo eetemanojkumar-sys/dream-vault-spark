@@ -6,5 +6,8 @@ verify_jwt = false
 [functions.dream-story]
 verify_jwt = false
 
-[functions.dream-image]
+[functions.dream-gpt]
+verify_jwt = false
+
+[functions.story-agent]
 verify_jwt = false

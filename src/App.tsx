@@ -37,6 +37,7 @@ const App = () => (
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/dream-gpt" element={<DreamGPT />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
