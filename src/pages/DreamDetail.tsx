@@ -26,7 +26,7 @@ import {
   VolumeX,
   Pause,
    Play,
-   Bot,
+   Stars,
    Send
 } from "lucide-react";
 import { DreamDialog } from "@/components/dreams/DreamDialog";
