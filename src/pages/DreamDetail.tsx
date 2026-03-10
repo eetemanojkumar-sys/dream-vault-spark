@@ -54,7 +54,7 @@ const DreamDetail = () => {
   const [storyLoading, setStoryLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-   const [storyAgentOpen, setStoryAgentOpen] = useState(false);
+   const [storyGPTOpen, setStoryGPTOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
