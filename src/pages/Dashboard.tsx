@@ -16,7 +16,8 @@ import {
   Flame,
   Compass,
   Settings,
-  User
+  User,
+  Stars
 } from "lucide-react";
 import { NotificationBell } from "@/components/social/NotificationBell";
 import type { Tables } from "@/integrations/supabase/types";
