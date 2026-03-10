@@ -633,13 +633,13 @@ const DreamDetail = () => {
         onUpdate={fetchData}
       />
        
-       {/* Story Agent Dialog */}
-       <StoryAgentDialog
-         open={storyAgentOpen}
-         onOpenChange={setStoryAgentOpen}
-         dream={dream}
-         onStorySaved={fetchData}
-       />
+        {/* Story GPT Dialog */}
+        <StoryGPTDialog
+          open={storyGPTOpen}
+          onOpenChange={setStoryGPTOpen}
+          dream={dream}
+          onStorySaved={fetchData}
+        />
     </div>
   );
 };
