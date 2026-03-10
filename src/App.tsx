@@ -14,6 +14,7 @@ import Explore from "./pages/Explore";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
+import DreamGPT from "./pages/DreamGPT";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
