@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import ReactMarkdown from "react-markdown";
 import { Loader2, Send, Stars, User, Sparkles, Save } from "lucide-react";
 
 interface Message {
@@ -30,6 +31,8 @@ interface StoryGPTDialogProps {
   dream: Dream;
   onStorySaved?: () => void;
 }
+
+const STORY_GPT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/story-gpt`;
 
 export function StoryGPTDialog({
   open,
@@ -56,34 +59,102 @@ export function StoryGPTDialog({
     }
   }, [messages]);
 
-  const sendInitialMessage = async () => {
-    setIsLoading(true);
-    try {
-      const response = await supabase.functions.invoke("story-gpt", {
-        body: {
-          messages: [
-            {
-              role: "user",
-              content: "Hello! I'd like to create a story based on my dream. Can you help me develop it?",
-            },
-          ],
-          dream: {
-            title: dream.title,
-            description: dream.description || "",
-            category: dream.category,
-          },
+  const streamRequest = async (bodyMessages: Message[]) => {
+    const resp = await fetch(STORY_GPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      },
+      body: JSON.stringify({
+        messages: bodyMessages,
+        dream: {
+          title: dream.title,
+          description: dream.description || "",
+          category: dream.category,
         },
+      }),
+    });
+
+    if (!resp.ok || !resp.body) {
+      const errData = await resp.json().catch(() => null);
+      throw new Error(errData?.error || `Request failed (${resp.status})`);
+    }
+
+    let assistantSoFar = "";
+    const upsertAssistant = (chunk: string) => {
+      assistantSoFar += chunk;
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant") {
+          return prev.map((m, i) =>
+            i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
+          );
+        }
+        return [...prev, { role: "assistant", content: assistantSoFar }];
       });
+    };
 
-      if (response.error) throw new Error(response.error.message);
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let textBuffer = "";
+    let streamDone = false;
 
-      setMessages([
-        {
-          role: "user",
-          content: "Hello! I'd like to create a story based on my dream. Can you help me develop it?",
-        },
-        { role: "assistant", content: response.data.message },
-      ]);
+    while (!streamDone) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      textBuffer += decoder.decode(value, { stream: true });
+
+      let newlineIndex: number;
+      while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+        let line = textBuffer.slice(0, newlineIndex);
+        textBuffer = textBuffer.slice(newlineIndex + 1);
+
+        if (line.endsWith("\r")) line = line.slice(0, -1);
+        if (line.startsWith(":") || line.trim() === "") continue;
+        if (!line.startsWith("data: ")) continue;
+
+        const jsonStr = line.slice(6).trim();
+        if (jsonStr === "[DONE]") { streamDone = true; break; }
+
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+          if (content) upsertAssistant(content);
+        } catch {
+          textBuffer = line + "\n" + textBuffer;
+          break;
+        }
+      }
+    }
+
+    if (textBuffer.trim()) {
+      for (let raw of textBuffer.split("\n")) {
+        if (!raw) continue;
+        if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+        if (raw.startsWith(":") || raw.trim() === "") continue;
+        if (!raw.startsWith("data: ")) continue;
+        const jsonStr = raw.slice(6).trim();
+        if (jsonStr === "[DONE]") continue;
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+          if (content) upsertAssistant(content);
+        } catch { /* ignore */ }
+      }
+    }
+  };
+
+  const sendInitialMessage = async () => {
+    const initialMsg: Message = {
+      role: "user",
+      content: "Hello! I'd like to create a story based on my dream. Can you help me develop it?",
+    };
+    setMessages([initialMsg]);
+    setIsLoading(true);
+
+    try {
+      await streamRequest([initialMsg]);
     } catch (error) {
       console.error("Initial message error:", error);
       toast({
@@ -101,27 +172,12 @@ export function StoryGPTDialog({
 
     const userMessage = input.trim();
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+    const newMessages: Message[] = [...messages, { role: "user", content: userMessage }];
+    setMessages(newMessages);
     setIsLoading(true);
 
     try {
-      const response = await supabase.functions.invoke("story-gpt", {
-        body: {
-          messages: [...messages, { role: "user", content: userMessage }],
-          dream: {
-            title: dream.title,
-            description: dream.description || "",
-            category: dream.category,
-          },
-        },
-      });
-
-      if (response.error) throw new Error(response.error.message);
-
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: response.data.message },
-      ]);
+      await streamRequest(newMessages);
     } catch (error) {
       console.error("Message error:", error);
       toast({
@@ -137,11 +193,7 @@ export function StoryGPTDialog({
   const saveAsStory = async () => {
     const assistantMessages = messages.filter((m) => m.role === "assistant");
     if (assistantMessages.length === 0) {
-      toast({
-        title: "No Story to Save",
-        description: "Generate some story content first!",
-        variant: "destructive",
-      });
+      toast({ title: "No Story to Save", description: "Generate some story content first!", variant: "destructive" });
       return;
     }
 
@@ -151,27 +203,14 @@ export function StoryGPTDialog({
 
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from("dreams")
-        .update({ story })
-        .eq("id", dream.id);
-
+      const { error } = await supabase.from("dreams").update({ story }).eq("id", dream.id);
       if (error) throw error;
-
-      toast({
-        title: "Story Saved!",
-        description: "The story has been saved to your dream.",
-      });
-
+      toast({ title: "Story Saved!", description: "The story has been saved to your dream." });
       onStorySaved?.();
       onOpenChange(false);
     } catch (error) {
       console.error("Save error:", error);
-      toast({
-        title: "Save Failed",
-        description: "Could not save the story. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Save Failed", description: "Could not save the story. Please try again.", variant: "destructive" });
     } finally {
       setIsSaving(false);
     }
@@ -198,18 +237,14 @@ export function StoryGPTDialog({
             {messages.length === 0 && !isLoading && (
               <div className="text-center py-12">
                 <Sparkles className="w-12 h-12 text-primary mx-auto mb-4 animate-pulse" />
-                <p className="text-muted-foreground">
-                  Starting your story journey...
-                </p>
+                <p className="text-muted-foreground">Starting your story journey...</p>
               </div>
             )}
 
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex gap-3 ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {message.role === "assistant" && (
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
@@ -223,7 +258,13 @@ export function StoryGPTDialog({
                       : "bg-muted"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  {message.role === "assistant" ? (
+                    <div className="prose prose-sm prose-invert max-w-none text-sm [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0.5">
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  )}
                 </div>
                 {message.role === "user" && (
                   <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center shrink-0">
@@ -233,7 +274,7 @@ export function StoryGPTDialog({
               </div>
             ))}
 
-            {isLoading && (
+            {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
               <div className="flex gap-3 justify-start">
                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                   <Stars className="w-4 h-4 text-primary" />
@@ -256,15 +297,11 @@ export function StoryGPTDialog({
               disabled={isLoading}
               className="flex-1"
             />
-            <Button
-              onClick={sendMessage}
-              disabled={!input.trim() || isLoading}
-              size="icon"
-            >
+            <Button onClick={sendMessage} disabled={!input.trim() || isLoading} size="icon">
               <Send className="w-4 h-4" />
             </Button>
           </div>
-          
+
           {messages.length > 1 && (
             <Button
               onClick={saveAsStory}
@@ -273,15 +310,9 @@ export function StoryGPTDialog({
               className="w-full border-primary/50 hover:bg-primary/10"
             >
               {isSaving ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
-                </>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
               ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Best Response as Story
-                </>
+                <><Save className="w-4 h-4 mr-2" />Save Best Response as Story</>
               )}
             </Button>
           )}
