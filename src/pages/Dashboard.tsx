@@ -21,7 +21,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { NotificationBell } from "@/components/social/NotificationBell";
-import type { Tables } from "@/integrations/supabase/types";
+import { ChevronRight } from "lucide-react";
 
 type Dream = Tables<"dreams">;
 type Profile = Tables<"profiles">;
