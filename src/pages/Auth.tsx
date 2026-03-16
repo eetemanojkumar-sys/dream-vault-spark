@@ -28,7 +28,6 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate input
     const validation = authSchema.safeParse({ email, password, name: isLogin ? undefined : name });
     if (!validation.success) {
       toast({
@@ -89,27 +88,33 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 stars">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4 stars nebula-bg">
+      {/* Background orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[20%] left-[10%] w-64 h-64 rounded-full bg-primary/8 blur-[80px] breathe" />
+        <div className="absolute bottom-[30%] right-[15%] w-48 h-48 rounded-full bg-dream-shimmer/6 blur-[60px] breathe-slow" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         {/* Logo */}
-        <div className="text-center mb-8 fade-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/20 mb-4 glow-primary">
+        <div className="text-center mb-8 fade-in-up">
+          <div className="inline-flex items-center justify-center w-18 h-18 rounded-2xl bg-gradient-to-br from-primary/30 to-dream-shimmer/20 mb-4 float border border-primary/20 glow-intense p-4">
             <Sparkles className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-4xl font-display text-gradient-aurora mb-2">Dream Vault</h1>
-          <p className="text-muted-foreground">Your personal sanctuary for dreams & goals</p>
+          <p className="text-sm text-muted-foreground">Your personal sanctuary for dreams & goals</p>
         </div>
 
         {/* Auth Card */}
-        <div className="glass-card p-8 fade-in" style={{ animationDelay: "0.1s" }}>
-          <div className="flex mb-6">
+        <div className="glass-card p-8 fade-in-up" style={{ animationDelay: "0.15s" }}>
+          <div className="flex mb-6 bg-muted/30 rounded-lg p-1">
             <button
               type="button"
               onClick={() => setIsLogin(true)}
-              className={`flex-1 pb-3 text-center font-medium transition-all border-b-2 ${
+              className={`flex-1 py-2.5 text-center text-sm font-medium rounded-md transition-all duration-300 ${
                 isLogin 
-                  ? "border-primary text-foreground" 
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-lg" 
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Sign In
@@ -117,10 +122,10 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsLogin(false)}
-              className={`flex-1 pb-3 text-center font-medium transition-all border-b-2 ${
+              className={`flex-1 py-2.5 text-center text-sm font-medium rounded-md transition-all duration-300 ${
                 !isLogin 
-                  ? "border-primary text-foreground" 
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-lg" 
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Sign Up
@@ -130,21 +135,21 @@ const Auth = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name" className="text-xs">Name</Label>
                 <Input
                   id="name"
                   type="text"
                   placeholder="Your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-muted/50 border-border/50 focus:border-primary"
+                  className="bg-muted/30 border-border/30 focus:border-primary/60 rounded-xl h-11"
                   maxLength={100}
                 />
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-xs">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -152,13 +157,13 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-muted/50 border-border/50 focus:border-primary"
+                className="bg-muted/30 border-border/30 focus:border-primary/60 rounded-xl h-11"
                 maxLength={255}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-xs">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -167,7 +172,7 @@ const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-muted/50 border-border/50 focus:border-primary pr-10"
+                  className="bg-muted/30 border-border/30 focus:border-primary/60 pr-10 rounded-xl h-11"
                   maxLength={128}
                 />
                 <button
@@ -183,7 +188,7 @@ const Auth = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground glow-primary transition-all group"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground glow-primary transition-all group rounded-xl h-11 mt-2"
             >
               {isLoading ? (
                 <span className="animate-pulse">Please wait...</span>
@@ -197,12 +202,12 @@ const Auth = () => {
           </form>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground mt-6 fade-in" style={{ animationDelay: "0.2s" }}>
+        <p className="text-center text-xs text-muted-foreground mt-6 fade-in-up" style={{ animationDelay: "0.25s" }}>
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <button
             type="button"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-primary hover:underline"
+            className="text-primary hover:underline font-medium"
           >
             {isLogin ? "Sign up" : "Sign in"}
           </button>
