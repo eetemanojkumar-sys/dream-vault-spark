@@ -67,6 +67,8 @@ export default {
           aurora: "hsl(var(--dream-aurora))",
           sunset: "hsl(var(--dream-sunset))",
           gold: "hsl(var(--dream-gold))",
+          nebula: "hsl(var(--dream-nebula))",
+          cosmic: "hsl(var(--dream-cosmic))",
         },
       },
       borderRadius: {
