@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -52,6 +52,8 @@
     --dream-aurora: 180 60% 50%;
     --dream-sunset: 330 70% 60%;
     --dream-gold: 42 80% 60%;
+    --dream-nebula: 290 70% 40%;
+    --dream-cosmic: 200 80% 55%;
 
     /* Glass effect tokens */
     --glass-bg: 240 18% 10% / 0.6;
@@ -63,6 +65,7 @@
     --gradient-aurora: linear-gradient(135deg, hsl(270 60% 50%), hsl(220 70% 50%), hsl(180 60% 40%));
     --gradient-gold: linear-gradient(135deg, hsl(42 80% 50%), hsl(35 90% 60%));
     --gradient-dream: linear-gradient(180deg, hsl(270 40% 15%) 0%, hsl(240 20% 6%) 100%);
+    --gradient-nebula: linear-gradient(135deg, hsl(290 70% 30%), hsl(270 60% 40%), hsl(220 70% 50%));
 
     /* Sidebar tokens */
     --sidebar-background: 240 18% 8%;
@@ -114,6 +117,19 @@
     @apply glass rounded-xl;
   }
 
+  .glass-card-hover {
+    @apply glass rounded-xl transition-all duration-500;
+  }
+
+  .glass-card-hover:hover {
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: 
+      0 12px 40px hsl(var(--glass-shadow)),
+      0 0 40px hsl(var(--dream-glow) / 0.1),
+      inset 0 1px 0 hsl(240 20% 50% / 0.15);
+    transform: translateY(-4px);
+  }
+
   .glass-button {
     @apply glass rounded-lg px-4 py-2 transition-all duration-300;
   }
@@ -138,6 +154,13 @@
     box-shadow: 0 0 60px hsl(var(--dream-glow) / 0.1);
   }
 
+  .glow-intense {
+    box-shadow: 
+      0 0 30px hsl(var(--primary) / 0.4),
+      0 0 60px hsl(var(--primary) / 0.2),
+      0 0 100px hsl(var(--primary) / 0.1);
+  }
+
   /* Text gradients */
   .text-gradient-aurora {
     background: var(--gradient-aurora);
@@ -151,6 +174,35 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .text-gradient-nebula {
+    background: var(--gradient-nebula);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Animated text shimmer */
+  .text-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--foreground)) 0%,
+      hsl(var(--primary)) 25%,
+      hsl(var(--dream-shimmer)) 50%,
+      hsl(var(--primary)) 75%,
+      hsl(var(--foreground)) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: textShimmer 4s ease-in-out infinite;
+  }
+
+  @keyframes textShimmer {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 200% center; }
   }
 
   /* Shimmer animation */
@@ -187,6 +239,21 @@
     50% { transform: translateY(-10px); }
   }
 
+  .float-slow {
+    animation: floatSlow 8s ease-in-out infinite;
+  }
+
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-15px) rotate(2deg); }
+    66% { transform: translateY(-5px) rotate(-1deg); }
+  }
+
+  .float-delayed {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: -3s;
+  }
+
   /* Pulse glow */
   .pulse-glow {
     animation: pulseGlow 2s ease-in-out infinite;
@@ -199,6 +266,40 @@
     50% { 
       box-shadow: 0 0 40px hsl(var(--primary) / 0.4);
     }
+  }
+
+  /* Breathing glow for orbs */
+  .breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
+  .breathe-slow {
+    animation: breathe 7s ease-in-out infinite;
+  }
+
+  /* Rotating animation */
+  .spin-slow {
+    animation: spinSlow 20s linear infinite;
+  }
+
+  @keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Orbit animation */
+  .orbit {
+    animation: orbit 15s linear infinite;
+  }
+
+  @keyframes orbit {
+    from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
   }
 
   /* Fade in animation */
@@ -217,10 +318,42 @@
     }
   }
 
+  .fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in-scale {
+    animation: fadeInScale 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
   /* Stagger children animation */
   .stagger-in > * {
     opacity: 0;
-    animation: fadeIn 0.5s ease-out forwards;
+    animation: fadeInUp 0.6s ease-out forwards;
   }
 
   .stagger-in > *:nth-child(1) { animation-delay: 0.1s; }
@@ -233,6 +366,7 @@
   /* Star particle background */
   .stars {
     position: relative;
+    overflow: hidden;
   }
 
   .stars::before {
@@ -244,10 +378,69 @@
       radial-gradient(2px 2px at 40px 70px, hsl(var(--foreground) / 0.2), transparent),
       radial-gradient(1px 1px at 90px 40px, hsl(var(--foreground) / 0.4), transparent),
       radial-gradient(2px 2px at 130px 80px, hsl(var(--foreground) / 0.2), transparent),
-      radial-gradient(1px 1px at 160px 120px, hsl(var(--foreground) / 0.3), transparent);
+      radial-gradient(1px 1px at 160px 120px, hsl(var(--foreground) / 0.3), transparent),
+      radial-gradient(1.5px 1.5px at 50px 150px, hsl(var(--primary) / 0.3), transparent),
+      radial-gradient(1px 1px at 180px 20px, hsl(var(--dream-shimmer) / 0.3), transparent);
     background-repeat: repeat;
     background-size: 200px 200px;
     pointer-events: none;
+    animation: twinkle 8s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  /* Nebula background overlay */
+  .nebula-bg {
+    position: relative;
+  }
+
+  .nebula-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 15% 30%, hsl(var(--dream-nebula) / 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 60%, hsl(var(--dream-cosmic) / 0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 80%, hsl(var(--dream-sunset) / 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    animation: nebulaDrift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes nebulaDrift {
+    0% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.05); }
+  }
+
+  /* Gradient border effect */
+  .gradient-border {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: var(--radius);
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.5), hsl(var(--dream-shimmer) / 0.3), hsl(var(--accent) / 0.3));
+    z-index: -1;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .gradient-border:hover::before {
+    opacity: 1;
+  }
+
+  /* Counter/number style */
+  .stat-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
 
   /* Dream category colors */
@@ -259,4 +452,22 @@
   .dream-spiritual { --dream-color: 280 50% 70%; }
   .dream-relationships { --dream-color: 350 70% 60%; }
   .dream-adventure { --dream-color: 25 80% 55%; }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
 }
