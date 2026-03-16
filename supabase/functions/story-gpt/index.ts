@@ -64,6 +64,7 @@ Keep responses conversational but engaging. When generating story passages, make
           model: "google/gemini-3-flash-preview",
           messages: fullMessages,
           max_completion_tokens: 1500,
+          stream: true,
         }),
       }
     );
@@ -86,15 +87,9 @@ Keep responses conversational but engaging. When generating story passages, make
       throw new Error(`AI API returned status ${response.status}`);
     }
 
-    const data = await response.json();
-    const assistantMessage = data.choices[0].message.content;
-
-    return new Response(
-      JSON.stringify({ message: assistantMessage }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(response.body, {
+      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+    });
   } catch (error: unknown) {
     console.error("Story GPT error:", error);
     const errorMessage = error instanceof Error ? error.message : "Failed to generate response";
