@@ -117,7 +117,7 @@ const Dreams = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8 pb-24">
       {/* Header */}
       <header className="flex items-center gap-4 mb-8 fade-in">
         <Link to="/dashboard">

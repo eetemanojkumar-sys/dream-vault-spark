@@ -5,23 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Sparkles, 
-  Target, 
-  CheckCircle2, 
-  TrendingUp, 
-  Plus, 
-  LogOut,
-  Star,
-  Clock,
-  Flame,
-  Compass,
-  Settings,
-  User,
-  Stars,
-  ArrowRight
+  Sparkles, Target, CheckCircle2, TrendingUp, Plus, LogOut,
+  Star, Clock, Flame, Compass, Settings, User, Stars, ArrowRight, Heart, MessageCircle
 } from "lucide-react";
 import { NotificationBell } from "@/components/social/NotificationBell";
 import { ChevronRight } from "lucide-react";
+import StoriesBar from "@/components/social/StoriesBar";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Dream = Tables<"dreams">;
@@ -39,30 +28,19 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
-
-    if (user) {
-      fetchData();
-    }
+    if (user) fetchData();
   }, [user, authLoading, navigate]);
 
   const fetchData = async () => {
     if (!user) return;
-
     try {
       const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
-      
+        .from("profiles").select("*").eq("user_id", user.id).single();
       setProfile(profileData);
 
       const { data: dreamsData } = await supabase
-        .from("dreams")
-        .select("*")
-        .eq("user_id", user.id)
+        .from("dreams").select("*").eq("user_id", user.id)
         .order("created_at", { ascending: false });
-      
       setDreams(dreamsData || []);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -78,12 +56,12 @@ const Dashboard = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center stars">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4 float glow-primary">
             <Sparkles className="w-8 h-8 text-primary" />
           </div>
-          <p className="text-muted-foreground font-display text-lg">Loading your dreams...</p>
+          <p className="text-muted-foreground font-display text-lg">Loading your feed...</p>
         </div>
       </div>
     );
@@ -94,8 +72,7 @@ const Dashboard = () => {
   const activeDreams = dreams.filter(d => d.status === "active").length;
   const favoriteDreams = dreams.filter(d => d.is_favorite).length;
   const progressPercentage = totalDreams > 0 ? Math.round((completedDreams / totalDreams) * 100) : 0;
-
-  const recentDreams = dreams.slice(0, 3);
+  const recentDreams = dreams.slice(0, 5);
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -113,209 +90,169 @@ const Dashboard = () => {
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
-      case "high":
-        return <Flame className="w-4 h-4 text-destructive" />;
-      case "medium":
-        return <TrendingUp className="w-4 h-4 text-accent" />;
-      default:
-        return <Clock className="w-4 h-4 text-dream-cosmic" />;
+      case "high": return <Flame className="w-3.5 h-3.5 text-destructive" />;
+      case "medium": return <TrendingUp className="w-3.5 h-3.5 text-accent" />;
+      default: return <Clock className="w-3.5 h-3.5 text-dream-cosmic" />;
     }
   };
 
-  const stats = [
-    {
-      icon: Target,
-      value: totalDreams,
-      label: "Total Dreams",
-      gradient: "from-primary/20 to-dream-shimmer/10",
-      iconColor: "text-primary",
-    },
-    {
-      icon: CheckCircle2,
-      value: completedDreams,
-      label: "Completed",
-      gradient: "from-dream-aurora/20 to-dream-aurora/5",
-      iconColor: "text-dream-aurora",
-    },
-    {
-      icon: TrendingUp,
-      value: activeDreams,
-      label: "In Progress",
-      gradient: "from-dream-cosmic/20 to-dream-cosmic/5",
-      iconColor: "text-dream-cosmic",
-    },
-    {
-      icon: Star,
-      value: favoriteDreams,
-      label: "Favorites",
-      gradient: "from-accent/20 to-dream-gold/5",
-      iconColor: "text-accent",
-    },
-  ];
-
   return (
-    <div className="min-h-screen p-4 md:p-8 stars">
-      {/* Subtle background orbs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[5%] right-[10%] w-64 h-64 rounded-full bg-primary/5 blur-[80px] breathe-slow" />
-        <div className="absolute bottom-[10%] left-[5%] w-48 h-48 rounded-full bg-dream-shimmer/5 blur-[60px] breathe" style={{ animationDelay: "-3s" }} />
-      </div>
-
-      {/* Header */}
-      <header className="relative z-10 flex items-center justify-between mb-8 fade-in">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/30 to-dream-shimmer/20 flex items-center justify-center glow-subtle border border-primary/20">
-            <Sparkles className="w-5 h-5 text-primary" />
+    <div className="min-h-screen pb-20">
+      {/* Top Header - Instagram style */}
+      <header className="sticky top-0 z-40 glass border-b border-border/20 px-4 py-3 fade-in">
+        <div className="flex items-center justify-between max-w-2xl mx-auto">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-primary" />
+            </div>
+            <h1 className="text-xl font-display text-gradient-aurora">Dream Vault</h1>
           </div>
-          <div>
-            <h1 className="text-2xl font-display text-gradient-aurora">Dream Vault</h1>
-            <p className="text-xs text-muted-foreground">Welcome back, <span className="text-foreground">{profile?.name || "Dreamer"}</span></p>
+          <div className="flex items-center gap-0.5">
+            <NotificationBell />
+            <Link to="/settings">
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground w-9 h-9">
+                <Settings className="w-4.5 h-4.5" />
+              </Button>
+            </Link>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground w-9 h-9">
+              <LogOut className="w-4.5 h-4.5" />
+            </Button>
           </div>
-        </div>
-        <div className="flex items-center gap-1">
-          <Link to="/dream-gpt">
-            <Button variant="ghost" size="icon" className="text-primary hover:text-primary/80 hover:bg-primary/10" title="Dream GPT">
-              <Stars className="w-5 h-5" />
-            </Button>
-          </Link>
-          <NotificationBell />
-          <Link to="/explore">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-              <Compass className="w-5 h-5" />
-            </Button>
-          </Link>
-          <Link to={`/profile/${user?.id}`}>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-              <User className="w-5 h-5" />
-            </Button>
-          </Link>
-          <Link to="/settings">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-              <Settings className="w-5 h-5" />
-            </Button>
-          </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleSignOut}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
         </div>
       </header>
 
-      {/* Stats Grid */}
-      <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8 stagger-in">
-        {stats.map(({ icon: Icon, value, label, gradient, iconColor }) => (
-          <div key={label} className="glass-card-hover p-5 group">
-            <div className="flex items-center gap-3 mb-2">
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
-                <Icon className={`w-5 h-5 ${iconColor}`} />
-              </div>
-              <span className="text-3xl stat-number text-foreground">{value}</span>
-            </div>
-            <p className="text-xs text-muted-foreground">{label}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Progress Section */}
-      <div className="relative z-10 glass-card p-6 mb-8 fade-in overflow-hidden" style={{ animationDelay: "0.3s" }}>
-        {/* Subtle decorative glow */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full" />
-        <div className="relative">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-display text-foreground">Overall Progress</h2>
-            <span className="text-3xl stat-number text-gradient-gold">{progressPercentage}%</span>
-          </div>
-          <Progress value={progressPercentage} className="h-3 bg-muted" />
-          <p className="text-xs text-muted-foreground mt-3">
-            {completedDreams} of {totalDreams} dreams achieved
-          </p>
+      <div className="max-w-2xl mx-auto px-4">
+        {/* Stories Bar */}
+        <div className="py-4 border-b border-border/10 fade-in" style={{ animationDelay: "0.1s" }}>
+          <StoriesBar />
         </div>
-      </div>
 
-      {/* Dream GPT Promo Card */}
-      <div className="relative z-10 mb-8 fade-in" style={{ animationDelay: "0.35s" }}>
-        <Link to="/dream-gpt">
-          <div className="glass-card-hover p-5 border-primary/20 group cursor-pointer overflow-hidden relative">
+        {/* Stats Row - compact */}
+        <div className="grid grid-cols-4 gap-2 py-4 fade-in" style={{ animationDelay: "0.15s" }}>
+          {[
+            { icon: Target, value: totalDreams, label: "Dreams", color: "text-primary" },
+            { icon: CheckCircle2, value: completedDreams, label: "Done", color: "text-dream-aurora" },
+            { icon: TrendingUp, value: activeDreams, label: "Active", color: "text-dream-cosmic" },
+            { icon: Star, value: favoriteDreams, label: "Faves", color: "text-accent" },
+          ].map(({ icon: Icon, value, label, color }) => (
+            <div key={label} className="text-center py-3 glass rounded-xl">
+              <Icon className={`w-4 h-4 ${color} mx-auto mb-1`} />
+              <p className="text-lg stat-number text-foreground">{value}</p>
+              <p className="text-[10px] text-muted-foreground">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Progress */}
+        <div className="glass-card p-4 mb-4 fade-in" style={{ animationDelay: "0.2s" }}>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-muted-foreground">Progress</span>
+            <span className="text-lg stat-number text-gradient-gold">{progressPercentage}%</span>
+          </div>
+          <Progress value={progressPercentage} className="h-2 bg-muted" />
+        </div>
+
+        {/* Dream GPT Card */}
+        <Link to="/dream-gpt" className="block mb-4 fade-in" style={{ animationDelay: "0.25s" }}>
+          <div className="glass-card-hover p-4 border-primary/20 group overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-dream-shimmer/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-dream-shimmer/20 flex items-center justify-center border border-primary/20 group-hover:glow-primary transition-all duration-500">
-                <Stars className="w-6 h-6 text-primary" />
+            <div className="relative flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/30 to-dream-shimmer/20 flex items-center justify-center border border-primary/20">
+                <Stars className="w-5 h-5 text-primary" />
               </div>
-              <div className="flex-1">
-                <h3 className="font-display text-lg text-foreground">Dream GPT</h3>
-                <p className="text-xs text-muted-foreground">Your AI companion for exploring dreams & goals</p>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-display text-base text-foreground">Dream GPT</h3>
+                <p className="text-[11px] text-muted-foreground truncate">Your AI dream companion</p>
               </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
             </div>
           </div>
         </Link>
-      </div>
 
-      {/* Recent Dreams */}
-      <div className="relative z-10 mb-8 fade-in" style={{ animationDelay: "0.4s" }}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-display text-foreground">Recent Dreams</h2>
-          <Link to="/dreams">
-            <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10 group text-xs">
-              View All
-              <ChevronRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
-            </Button>
-          </Link>
-        </div>
-
-        {recentDreams.length === 0 ? (
-          <div className="glass-card p-10 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 float">
-              <Sparkles className="w-8 h-8 text-primary/50" />
-            </div>
-            <h3 className="text-lg font-display mb-2">No dreams yet</h3>
-            <p className="text-sm text-muted-foreground mb-6">Start capturing your dreams and goals</p>
+        {/* Feed - Recent Dreams (Social card style) */}
+        <div className="mb-4 fade-in" style={{ animationDelay: "0.3s" }}>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-display text-foreground">Your Feed</h2>
             <Link to="/dreams">
-              <Button className="bg-primary hover:bg-primary/90 glow-primary rounded-xl">
-                <Plus className="w-4 h-4 mr-2" />
-                Create Your First Dream
+              <Button variant="ghost" size="sm" className="text-primary text-xs group">
+                See All <ChevronRight className="w-3 h-3 ml-0.5 group-hover:translate-x-0.5 transition-transform" />
               </Button>
             </Link>
           </div>
-        ) : (
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {recentDreams.map((dream) => (
-              <Link key={dream.id} to={`/dreams/${dream.id}`}>
-                <div className="glass-card-hover p-5 group cursor-pointer">
-                  <div className="flex items-start justify-between mb-3">
-                    <span className={`text-[10px] px-2.5 py-1 rounded-full font-medium ${getCategoryColor(dream.category)}`}>
-                      {dream.category}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {getPriorityIcon(dream.priority)}
-                      {dream.is_favorite && <Star className="w-4 h-4 text-accent fill-accent" />}
+
+          {recentDreams.length === 0 ? (
+            <div className="glass-card p-10 text-center">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 float">
+                <Sparkles className="w-7 h-7 text-primary/50" />
+              </div>
+              <h3 className="font-display text-lg mb-2">No dreams yet</h3>
+              <p className="text-sm text-muted-foreground mb-5">Start capturing your dreams</p>
+              <Link to="/dreams?new=true">
+                <Button className="bg-primary hover:bg-primary/90 glow-primary rounded-xl">
+                  <Plus className="w-4 h-4 mr-2" /> Create First Dream
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentDreams.map((dream) => (
+                <Link key={dream.id} to={`/dreams/${dream.id}`}>
+                  <div className="glass-card-hover overflow-hidden group cursor-pointer">
+                    {/* Card Header - user info */}
+                    <div className="flex items-center gap-3 p-4 pb-2">
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-dream-shimmer flex items-center justify-center">
+                        <span className="text-xs font-bold text-primary-foreground">
+                          {profile?.name?.charAt(0)?.toUpperCase() || "D"}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{profile?.name || "You"}</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {new Date(dream.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </p>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${getCategoryColor(dream.category)}`}>
+                        {dream.category}
+                      </span>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="px-4 pb-2">
+                      <h3 className="font-display text-lg text-foreground group-hover:text-primary transition-colors mb-1">
+                        {dream.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                        {dream.description || "No description"}
+                      </p>
+                    </div>
+
+                    {/* Card Actions - social style */}
+                    <div className="flex items-center gap-4 px-4 py-3 border-t border-border/10">
+                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                        {dream.is_favorite ? (
+                          <Star className="w-4 h-4 text-accent fill-accent" />
+                        ) : (
+                          <Star className="w-4 h-4" />
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                        {getPriorityIcon(dream.priority)}
+                        <span className="text-[10px] capitalize">{dream.priority}</span>
+                      </div>
+                      {dream.story && (
+                        <div className="flex items-center gap-1 text-primary/70">
+                          <Stars className="w-3.5 h-3.5" />
+                          <span className="text-[10px]">Story</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <h3 className="font-display text-lg text-foreground group-hover:text-primary transition-colors duration-300 mb-2 line-clamp-1">
-                    {dream.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                    {dream.description || "No description"}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Quick Action */}
-      <Link to="/dreams?new=true" className="relative z-10 block fade-in" style={{ animationDelay: "0.5s" }}>
-        <div className="glass-card p-6 border-dashed border-2 border-primary/20 hover:border-primary/50 transition-all duration-500 cursor-pointer group text-center hover:glow-subtle">
-          <Plus className="w-8 h-8 text-primary mx-auto mb-2 group-hover:scale-110 group-hover:rotate-90 transition-all duration-500" />
-          <p className="text-foreground font-medium text-sm">Add New Dream</p>
-          <p className="text-xs text-muted-foreground mt-1">Capture your next goal or vision</p>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-      </Link>
+      </div>
     </div>
   );
 };
