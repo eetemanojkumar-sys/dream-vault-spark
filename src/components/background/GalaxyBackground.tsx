@@ -1,13 +1,12 @@
-import { useRef, useMemo, useCallback } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useRef, useMemo } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-const STAR_COUNT = 2000;
-const NEBULA_COUNT = 400;
+const STAR_COUNT = 3000;
+const SHOOTING_STAR_COUNT = 5;
 
 function Stars() {
   const ref = useRef<THREE.Points>(null);
-  const mouseRef = useRef({ x: 0, y: 0 });
 
   const [positions, colors, sizes] = useMemo(() => {
     const pos = new Float32Array(STAR_COUNT * 3);
@@ -15,46 +14,35 @@ function Stars() {
     const siz = new Float32Array(STAR_COUNT);
 
     for (let i = 0; i < STAR_COUNT; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
+      // Distribute in a sphere
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 8 + Math.random() * 12;
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi);
 
-      const colorChoice = Math.random();
-      if (colorChoice < 0.3) {
-        col[i * 3] = 0.6; col[i * 3 + 1] = 0.4; col[i * 3 + 2] = 1.0;
-      } else if (colorChoice < 0.5) {
-        col[i * 3] = 0.4; col[i * 3 + 1] = 0.6; col[i * 3 + 2] = 1.0;
-      } else if (colorChoice < 0.65) {
-        col[i * 3] = 1.0; col[i * 3 + 1] = 0.85; col[i * 3 + 2] = 0.5;
+      const c = Math.random();
+      if (c < 0.25) {
+        col[i * 3] = 0.7; col[i * 3 + 1] = 0.5; col[i * 3 + 2] = 1.0;
+      } else if (c < 0.45) {
+        col[i * 3] = 0.4; col[i * 3 + 1] = 0.7; col[i * 3 + 2] = 1.0;
+      } else if (c < 0.6) {
+        col[i * 3] = 1.0; col[i * 3 + 1] = 0.9; col[i * 3 + 2] = 0.6;
       } else {
-        col[i * 3] = 0.9; col[i * 3 + 1] = 0.9; col[i * 3 + 2] = 1.0;
+        col[i * 3] = 0.95; col[i * 3 + 1] = 0.95; col[i * 3 + 2] = 1.0;
       }
 
-      siz[i] = Math.random() * 3 + 0.5;
+      siz[i] = Math.random() * 2.5 + 0.3;
     }
     return [pos, col, siz];
   }, []);
 
-  const { size } = useThree();
-
-  const handlePointerMove = useCallback((e: PointerEvent) => {
-    mouseRef.current.x = (e.clientX / size.width - 0.5) * 2;
-    mouseRef.current.y = -(e.clientY / size.height - 0.5) * 2;
-  }, [size]);
-
   useFrame((state) => {
     if (!ref.current) return;
-    const t = state.clock.elapsedTime;
-    ref.current.rotation.y = t * 0.02 + mouseRef.current.x * 0.3;
-    ref.current.rotation.x = t * 0.01 + mouseRef.current.y * 0.3;
+    ref.current.rotation.y = state.clock.elapsedTime * 0.008;
+    ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.005) * 0.1;
   });
-
-  // Listen to pointer events on the canvas
-  const { gl } = useThree();
-  useMemo(() => {
-    gl.domElement.addEventListener("pointermove", handlePointerMove);
-    return () => gl.domElement.removeEventListener("pointermove", handlePointerMove);
-  }, [gl, handlePointerMove]);
 
   return (
     <points ref={ref}>
@@ -65,10 +53,10 @@ function Stars() {
       </bufferGeometry>
       <pointsMaterial
         vertexColors
-        size={0.04}
+        size={0.035}
         sizeAttenuation
         transparent
-        opacity={0.9}
+        opacity={0.85}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
       />
@@ -76,27 +64,39 @@ function Stars() {
   );
 }
 
-function NebulaParticles() {
+function Nebula() {
   const ref = useRef<THREE.Points>(null);
+  const count = 600;
 
   const [positions, colors] = useMemo(() => {
-    const pos = new Float32Array(NEBULA_COUNT * 3);
-    const col = new Float32Array(NEBULA_COUNT * 3);
+    const pos = new Float32Array(count * 3);
+    const col = new Float32Array(count * 3);
 
-    for (let i = 0; i < NEBULA_COUNT; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const radius = Math.random() * 5 + 2;
-      pos[i * 3] = Math.cos(angle) * radius + (Math.random() - 0.5) * 3;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 4;
-      pos[i * 3 + 2] = Math.sin(angle) * radius + (Math.random() - 0.5) * 3;
+    for (let i = 0; i < count; i++) {
+      // Spiral arm distribution
+      const arm = Math.floor(Math.random() * 3);
+      const armAngle = (arm / 3) * Math.PI * 2;
+      const dist = Math.random() * 6 + 1;
+      const spread = 0.8;
+      const angle = armAngle + dist * 0.3 + (Math.random() - 0.5) * spread;
 
-      const c = Math.random();
-      if (c < 0.4) {
-        col[i * 3] = 0.5; col[i * 3 + 1] = 0.2; col[i * 3 + 2] = 0.8;
-      } else if (c < 0.7) {
-        col[i * 3] = 0.2; col[i * 3 + 1] = 0.4; col[i * 3 + 2] = 0.9;
+      pos[i * 3] = Math.cos(angle) * dist + (Math.random() - 0.5) * 1.5;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 2;
+      pos[i * 3 + 2] = Math.sin(angle) * dist + (Math.random() - 0.5) * 1.5;
+
+      const palette = Math.random();
+      if (palette < 0.35) {
+        // Deep purple
+        col[i * 3] = 0.4; col[i * 3 + 1] = 0.15; col[i * 3 + 2] = 0.7;
+      } else if (palette < 0.6) {
+        // Electric blue
+        col[i * 3] = 0.15; col[i * 3 + 1] = 0.35; col[i * 3 + 2] = 0.85;
+      } else if (palette < 0.8) {
+        // Teal
+        col[i * 3] = 0.1; col[i * 3 + 1] = 0.6; col[i * 3 + 2] = 0.65;
       } else {
-        col[i * 3] = 0.3; col[i * 3 + 1] = 0.7; col[i * 3 + 2] = 0.6;
+        // Pink accent
+        col[i * 3] = 0.7; col[i * 3 + 1] = 0.2; col[i * 3 + 2] = 0.5;
       }
     }
     return [pos, col];
@@ -104,7 +104,7 @@ function NebulaParticles() {
 
   useFrame((state) => {
     if (!ref.current) return;
-    ref.current.rotation.y = state.clock.elapsedTime * 0.03;
+    ref.current.rotation.y = state.clock.elapsedTime * 0.015;
   });
 
   return (
@@ -115,10 +115,10 @@ function NebulaParticles() {
       </bufferGeometry>
       <pointsMaterial
         vertexColors
-        size={0.08}
+        size={0.12}
         sizeAttenuation
         transparent
-        opacity={0.4}
+        opacity={0.25}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
       />
@@ -126,18 +126,69 @@ function NebulaParticles() {
   );
 }
 
+function ShootingStars() {
+  const refs = useRef<(THREE.Mesh | null)[]>([]);
+
+  const stars = useMemo(() => {
+    return Array.from({ length: SHOOTING_STAR_COUNT }, () => ({
+      delay: Math.random() * 20,
+      speed: 0.8 + Math.random() * 1.2,
+      x: (Math.random() - 0.5) * 16,
+      y: 3 + Math.random() * 4,
+      z: -5 - Math.random() * 5,
+    }));
+  }, []);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    stars.forEach((star, i) => {
+      const mesh = refs.current[i];
+      if (!mesh) return;
+      const cycle = ((t - star.delay) * star.speed) % 12;
+      if (cycle > 0 && cycle < 1.5) {
+        mesh.visible = true;
+        const progress = cycle / 1.5;
+        mesh.position.set(
+          star.x + progress * 6,
+          star.y - progress * 4,
+          star.z
+        );
+        mesh.scale.setScalar(1 - progress * 0.7);
+        (mesh.material as THREE.MeshBasicMaterial).opacity = (1 - progress) * 0.8;
+      } else {
+        mesh.visible = false;
+      }
+    });
+  });
+
+  return (
+    <>
+      {stars.map((_, i) => (
+        <mesh
+          key={i}
+          ref={(el) => { refs.current[i] = el; }}
+          visible={false}
+        >
+          <sphereGeometry args={[0.02, 4, 4]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.8} />
+        </mesh>
+      ))}
+    </>
+  );
+}
+
 const GalaxyBackground = () => {
   return (
-    <div className="fixed inset-0 z-0 pointer-events-auto">
+    <div className="fixed inset-0 z-0" style={{ pointerEvents: "none" }}>
       <Canvas
-        camera={{ position: [0, 0, 6], fov: 60 }}
+        camera={{ position: [0, 1.5, 8], fov: 55 }}
         style={{ background: "transparent" }}
-        gl={{ alpha: true, antialias: false }}
+        gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
         dpr={[1, 1.5]}
       >
         <Stars />
-        <NebulaParticles />
-        <ambientLight intensity={0.1} />
+        <Nebula />
+        <ShootingStars />
       </Canvas>
     </div>
   );
