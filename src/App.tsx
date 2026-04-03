@@ -5,8 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { lazy, Suspense } from "react";
-import { Sparkles } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import BottomNav from "@/components/social/BottomNav";
+import PageTransition from "@/components/PageTransition";
 
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
