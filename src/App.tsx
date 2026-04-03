@@ -38,20 +38,22 @@ const AppLayout = () => {
         <GalaxyBackground />
       </Suspense>
       <div className="relative z-10">
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dreams" element={<Dreams />} />
-          <Route path="/dreams/:id" element={<DreamDetail />} />
-          <Route path="/shared/:token" element={<SharedDream />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/profile/:userId" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/dream-gpt" element={<DreamGPT />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+            <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+            <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
+            <Route path="/dreams" element={<PageTransition><Dreams /></PageTransition>} />
+            <Route path="/dreams/:id" element={<PageTransition><DreamDetail /></PageTransition>} />
+            <Route path="/shared/:token" element={<PageTransition><SharedDream /></PageTransition>} />
+            <Route path="/explore" element={<PageTransition><Explore /></PageTransition>} />
+            <Route path="/profile/:userId" element={<PageTransition><Profile /></PageTransition>} />
+            <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
+            <Route path="/notifications" element={<PageTransition><Notifications /></PageTransition>} />
+            <Route path="/dream-gpt" element={<PageTransition><DreamGPT /></PageTransition>} />
+            <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+          </Routes>
+        </AnimatePresence>
         {showBottomNav && <BottomNav />}
       </div>
     </>
