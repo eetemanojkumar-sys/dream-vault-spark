@@ -108,6 +108,7 @@ const StoryCreator = () => {
     if (!user || !generatedStory) return;
 
     setIsPublishing(true);
+    try {
       // Generate share token first
       const { data: tokenData } = await supabase.rpc("generate_share_token");
       const shareToken = tokenData || crypto.randomUUID();
