@@ -21,6 +21,7 @@ import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
 import DreamGPT from "./pages/DreamGPT";
 import NotFound from "./pages/NotFound";
+import StoryCreator from "./pages/StoryCreator";
 
 const GalaxyBackground = lazy(() => import("@/components/background/GalaxyBackground"));
 
