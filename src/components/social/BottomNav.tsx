@@ -11,7 +11,8 @@ const BottomNav = () => {
     { icon: Home, label: "Home", path: "/dashboard" },
     { icon: Compass, label: "Explore", path: "/explore" },
     { icon: Plus, label: "Create", path: "/dreams?new=true", isCreate: true },
-    { icon: Stars, label: "Dream GPT", path: "/dream-gpt" },
+    { icon: Wand2, label: "Story", path: "/story-creator" },
+    { icon: Stars, label: "GPT", path: "/dream-gpt" },
     { icon: User, label: "Profile", path: user ? `/profile/${user.id}` : "/auth" },
   ];
 

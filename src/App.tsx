@@ -52,6 +52,7 @@ const AppLayout = () => {
             <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
             <Route path="/notifications" element={<PageTransition><Notifications /></PageTransition>} />
             <Route path="/dream-gpt" element={<PageTransition><DreamGPT /></PageTransition>} />
+            <Route path="/story-creator" element={<PageTransition><StoryCreator /></PageTransition>} />
             <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </AnimatePresence>
