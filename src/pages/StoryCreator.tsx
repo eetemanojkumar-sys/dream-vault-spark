@@ -56,6 +56,7 @@ const StoryCreator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [published, setPublished] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   if (!authLoading && !user) {
     navigate("/auth");
