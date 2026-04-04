@@ -21,6 +21,7 @@ import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
 import DreamGPT from "./pages/DreamGPT";
 import NotFound from "./pages/NotFound";
+import StoryCreator from "./pages/StoryCreator";
 
 const GalaxyBackground = lazy(() => import("@/components/background/GalaxyBackground"));
 
@@ -51,6 +52,7 @@ const AppLayout = () => {
             <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
             <Route path="/notifications" element={<PageTransition><Notifications /></PageTransition>} />
             <Route path="/dream-gpt" element={<PageTransition><DreamGPT /></PageTransition>} />
+            <Route path="/story-creator" element={<PageTransition><StoryCreator /></PageTransition>} />
             <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </AnimatePresence>
