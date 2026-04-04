@@ -17,6 +17,8 @@ import {
   Send,
   CheckCircle2,
   Wand2,
+  Pencil,
+  Eye,
 } from "lucide-react";
 import {
   Select,
@@ -54,6 +56,7 @@ const StoryCreator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [published, setPublished] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   if (!authLoading && !user) {
     navigate("/auth");
@@ -232,21 +235,45 @@ const StoryCreator = () => {
       {/* Generated Story */}
       {(generatedStory || isGenerating) && (
         <div className="glass rounded-2xl border border-border/30 overflow-hidden mb-6">
-          <div className="px-5 py-3 border-b border-border/30 flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-foreground">Generated Story</span>
+          <div className="px-5 py-3 border-b border-border/30 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">
+                {isEditing ? "Edit Story" : "Generated Story"}
+              </span>
+            </div>
+            {generatedStory && !published && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditing(!isEditing)}
+                className="gap-1.5 h-8 text-xs"
+              >
+                {isEditing ? (
+                  <><Eye className="w-3.5 h-3.5" />Preview</>
+                ) : (
+                  <><Pencil className="w-3.5 h-3.5" />Edit</>
+                )}
+              </Button>
+            )}
           </div>
 
-          <ScrollArea className="max-h-[50vh] p-5">
+          <ScrollArea className="max-h-[50vh]">
             {isGenerating && !generatedStory ? (
-              <div className="flex items-center justify-center py-12">
+              <div className="flex items-center justify-center py-12 px-5">
                 <div className="text-center space-y-3">
                   <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
                   <p className="text-sm text-muted-foreground">Crafting your story...</p>
                 </div>
               </div>
+            ) : isEditing ? (
+              <Textarea
+                value={generatedStory}
+                onChange={(e) => setGeneratedStory(e.target.value)}
+                className="min-h-[300px] border-0 rounded-none bg-transparent resize-none focus-visible:ring-0 text-sm leading-relaxed p-5"
+              />
             ) : (
-              <div className="prose prose-sm prose-invert max-w-none text-foreground [&_p]:my-2 [&_p]:leading-relaxed">
+              <div className="prose prose-sm prose-invert max-w-none text-foreground [&_p]:my-2 [&_p]:leading-relaxed p-5">
                 <ReactMarkdown>{generatedStory}</ReactMarkdown>
               </div>
             )}
