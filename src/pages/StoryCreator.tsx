@@ -280,7 +280,7 @@ const StoryCreator = () => {
 
           {published && (
             <div className="px-5 py-4 border-t border-border/30">
-              <div className="flex items-center justify-center gap-2 text-green-400">
+              <div className="flex items-center justify-center gap-2 text-primary">
                 <CheckCircle2 className="w-5 h-5" />
                 <span className="font-medium">Published successfully! Redirecting...</span>
               </div>
