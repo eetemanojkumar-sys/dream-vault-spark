@@ -109,6 +109,10 @@ const StoryCreator = () => {
 
     setIsPublishing(true);
     try {
+      // Generate share token first
+      const { data: tokenData } = await supabase.rpc("generate_share_token");
+      const shareToken = tokenData || crypto.randomUUID();
+
       const { data, error } = await supabase.from("dreams").insert({
         user_id: user.id,
         title: title.trim(),
@@ -116,6 +120,7 @@ const StoryCreator = () => {
         category,
         story: generatedStory,
         is_public: true,
+        share_token: shareToken,
         priority: "medium",
         status: "active",
       }).select("id").single();
