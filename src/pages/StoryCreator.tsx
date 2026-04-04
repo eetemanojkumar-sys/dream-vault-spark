@@ -17,6 +17,8 @@ import {
   Send,
   CheckCircle2,
   Wand2,
+  Pencil,
+  Eye,
 } from "lucide-react";
 import {
   Select,
