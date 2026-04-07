@@ -4,9 +4,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { 
+import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { DreamCardSkeleton, StatCardSkeleton } from "@/components/ui/shimmer-skeleton";
+import { StreakTracker } from "@/components/dashboard/StreakTracker";
+import { CategoryChart } from "@/components/dashboard/CategoryChart";
+import { AchievementBadges } from "@/components/dashboard/AchievementBadges";
+import {
   Sparkles, Target, CheckCircle2, TrendingUp, Plus, LogOut,
-  Star, Clock, Flame, Compass, Settings, User, Stars, ArrowRight, Heart, MessageCircle
+  Star, Clock, Flame, Settings, Stars, ArrowRight,
 } from "lucide-react";
 import { NotificationBell } from "@/components/social/NotificationBell";
 import { ChevronRight } from "lucide-react";
@@ -56,12 +61,24 @@ const Dashboard = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4 float glow-primary">
-            <Sparkles className="w-8 h-8 text-primary" />
+      <div className="min-h-screen pb-20">
+        <header className="sticky top-0 z-40 glass border-b border-border/20 px-4 py-3">
+          <div className="flex items-center justify-between max-w-2xl mx-auto">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+              </div>
+              <h1 className="text-xl font-display text-gradient-aurora">Dream Vault</h1>
+            </div>
           </div>
-          <p className="text-muted-foreground font-display text-lg">Loading your feed...</p>
+        </header>
+        <div className="max-w-2xl mx-auto px-4 pt-4">
+          <div className="grid grid-cols-4 gap-2 mb-4">
+            {Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)}
+          </div>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => <DreamCardSkeleton key={i} />)}
+          </div>
         </div>
       </div>
     );
@@ -98,11 +115,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen pb-20">
-      {/* Top Header - Instagram style */}
+      {/* Top Header */}
       <header className="sticky top-0 z-40 glass border-b border-border/20 px-4 py-3 fade-in">
         <div className="flex items-center justify-between max-w-2xl mx-auto">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center pulse-glow">
               <Sparkles className="w-4 h-4 text-primary" />
             </div>
             <h1 className="text-xl font-display text-gradient-aurora">Dream Vault</h1>
@@ -127,37 +144,62 @@ const Dashboard = () => {
           <StoriesBar />
         </div>
 
-        {/* Stats Row - compact */}
+        {/* Stats Row with animated counters */}
         <div className="grid grid-cols-4 gap-2 py-4 fade-in" style={{ animationDelay: "0.15s" }}>
           {[
-            { icon: Target, value: totalDreams, label: "Dreams", color: "text-primary" },
-            { icon: CheckCircle2, value: completedDreams, label: "Done", color: "text-dream-aurora" },
-            { icon: TrendingUp, value: activeDreams, label: "Active", color: "text-dream-cosmic" },
-            { icon: Star, value: favoriteDreams, label: "Faves", color: "text-accent" },
-          ].map(({ icon: Icon, value, label, color }) => (
-            <div key={label} className="text-center py-3 glass rounded-xl">
+            { icon: Target, value: totalDreams, label: "Dreams", color: "text-primary", glow: "shadow-[0_0_15px_hsl(var(--primary)/0.15)]" },
+            { icon: CheckCircle2, value: completedDreams, label: "Done", color: "text-dream-aurora", glow: "shadow-[0_0_15px_hsl(var(--dream-aurora)/0.15)]" },
+            { icon: TrendingUp, value: activeDreams, label: "Active", color: "text-dream-cosmic", glow: "shadow-[0_0_15px_hsl(var(--dream-cosmic)/0.15)]" },
+            { icon: Star, value: favoriteDreams, label: "Faves", color: "text-accent", glow: "shadow-[0_0_15px_hsl(var(--accent)/0.15)]" },
+          ].map(({ icon: Icon, value, label, color, glow }) => (
+            <div key={label} className={`text-center py-3 glass rounded-xl hover:scale-105 transition-transform duration-300 ${glow}`}>
               <Icon className={`w-4 h-4 ${color} mx-auto mb-1`} />
-              <p className="text-lg stat-number text-foreground">{value}</p>
+              <AnimatedCounter value={value} className="text-lg stat-number text-foreground block" />
               <p className="text-[10px] text-muted-foreground">{label}</p>
             </div>
           ))}
         </div>
 
+        {/* Streak Tracker */}
+        <div className="mb-4 fade-in" style={{ animationDelay: "0.2s" }}>
+          <StreakTracker dreams={dreams} />
+        </div>
+
         {/* Progress */}
-        <div className="glass-card p-4 mb-4 fade-in" style={{ animationDelay: "0.2s" }}>
+        <div className="glass-card p-4 mb-4 fade-in" style={{ animationDelay: "0.25s" }}>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">Progress</span>
+            <span className="text-sm text-muted-foreground">Completion Progress</span>
             <span className="text-lg stat-number text-gradient-gold">{progressPercentage}%</span>
           </div>
-          <Progress value={progressPercentage} className="h-2 bg-muted" />
+          <div className="relative">
+            <Progress value={progressPercentage} className="h-2.5 bg-muted" />
+            {progressPercentage > 0 && (
+              <div
+                className="absolute top-0 h-2.5 rounded-full opacity-50 blur-sm bg-primary"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Category Chart */}
+        {dreams.length > 0 && (
+          <div className="mb-4 fade-in" style={{ animationDelay: "0.3s" }}>
+            <CategoryChart dreams={dreams} />
+          </div>
+        )}
+
+        {/* Achievement Badges */}
+        <div className="mb-4 fade-in" style={{ animationDelay: "0.35s" }}>
+          <AchievementBadges dreams={dreams} />
         </div>
 
         {/* Dream GPT Card */}
-        <Link to="/dream-gpt" className="block mb-4 fade-in" style={{ animationDelay: "0.25s" }}>
+        <Link to="/dream-gpt" className="block mb-4 fade-in" style={{ animationDelay: "0.4s" }}>
           <div className="glass-card-hover p-4 border-primary/20 group overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-dream-shimmer/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/30 to-dream-shimmer/20 flex items-center justify-center border border-primary/20">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/30 to-dream-shimmer/20 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-500">
                 <Stars className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
@@ -169,8 +211,8 @@ const Dashboard = () => {
           </div>
         </Link>
 
-        {/* Feed - Recent Dreams (Social card style) */}
-        <div className="mb-4 fade-in" style={{ animationDelay: "0.3s" }}>
+        {/* Feed */}
+        <div className="mb-4 fade-in" style={{ animationDelay: "0.45s" }}>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-display text-foreground">Your Feed</h2>
             <Link to="/dreams">
@@ -194,13 +236,12 @@ const Dashboard = () => {
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 stagger-in">
               {recentDreams.map((dream) => (
                 <Link key={dream.id} to={`/dreams/${dream.id}`}>
                   <div className="glass-card-hover overflow-hidden group cursor-pointer">
-                    {/* Card Header - user info */}
                     <div className="flex items-center gap-3 p-4 pb-2">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-dream-shimmer flex items-center justify-center">
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-dream-shimmer flex items-center justify-center ring-2 ring-primary/20">
                         <span className="text-xs font-bold text-primary-foreground">
                           {profile?.name?.charAt(0)?.toUpperCase() || "D"}
                         </span>
@@ -216,7 +257,6 @@ const Dashboard = () => {
                       </span>
                     </div>
 
-                    {/* Card Content */}
                     <div className="px-4 pb-2">
                       <h3 className="font-display text-lg text-foreground group-hover:text-primary transition-colors mb-1">
                         {dream.title}
@@ -226,7 +266,6 @@ const Dashboard = () => {
                       </p>
                     </div>
 
-                    {/* Card Actions - social style */}
                     <div className="flex items-center gap-4 px-4 py-3 border-t border-border/10">
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         {dream.is_favorite ? (
