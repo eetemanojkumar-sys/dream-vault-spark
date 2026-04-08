@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      challenge_entries: {
+        Row: {
+          challenge_id: string
+          created_at: string
+          dream_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          created_at?: string
+          dream_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          created_at?: string
+          dream_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_entries_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "dream_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_entries_dream_id_fkey"
+            columns: ["dream_id"]
+            isOneToOne: false
+            referencedRelation: "dreams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dream_challenges: {
+        Row: {
+          badge_icon: string
+          badge_name: string
+          category: string | null
+          created_at: string
+          description: string | null
+          end_date: string
+          id: string
+          is_active: boolean
+          start_date: string
+          theme: string
+          title: string
+        }
+        Insert: {
+          badge_icon?: string
+          badge_name: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          theme: string
+          title: string
+        }
+        Update: {
+          badge_icon?: string
+          badge_name?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          theme?: string
+          title?: string
+        }
+        Relationships: []
+      }
       dream_comments: {
         Row: {
           content: string
