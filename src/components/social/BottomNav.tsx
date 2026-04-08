@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, Plus, Stars, User, Wand2 } from "lucide-react";
+import { Home, Compass, Plus, Stars, User, Wand2, Trophy } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -13,7 +13,7 @@ const BottomNav = () => {
     { icon: Home, label: "Home", path: "/dashboard" },
     { icon: Compass, label: "Explore", path: "/explore" },
     { icon: Plus, label: "Create", path: "/dreams?new=true", isCreate: true },
-    { icon: Wand2, label: "Story", path: "/story-creator" },
+    { icon: Trophy, label: "Challenges", path: "/challenges" },
     { icon: Stars, label: "GPT", path: "/dream-gpt" },
     { icon: User, label: "Profile", path: user ? `/profile/${user.id}` : "/auth" },
   ];
