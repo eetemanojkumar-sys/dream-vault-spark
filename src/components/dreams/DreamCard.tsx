@@ -18,90 +18,59 @@ interface DreamCardProps {
   onToggleFavorite: (dream: Dream) => void;
 }
 
+const categoryStyles: Record<string, string> = {
+  personal: "bg-primary/10 text-primary",
+  career: "bg-dream-cosmic/10 text-dream-cosmic",
+  health: "bg-dream-aurora/10 text-dream-aurora",
+  financial: "bg-accent/10 text-accent",
+  creative: "bg-dream-sunset/10 text-dream-sunset",
+  spiritual: "bg-dream-glow/10 text-dream-glow",
+  relationships: "bg-dream-sunset/10 text-dream-sunset",
+  adventure: "bg-accent/10 text-accent",
+};
+
+const statusStyles: Record<string, string> = {
+  active: "bg-dream-aurora/10 text-dream-aurora",
+  completed: "bg-primary/10 text-primary",
+  paused: "bg-accent/10 text-accent",
+  archived: "bg-muted text-muted-foreground",
+};
+
 export function DreamCard({ dream, onEdit, onDelete, onToggleFavorite }: DreamCardProps) {
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      personal: "bg-purple-500/20 text-purple-300",
-      career: "bg-blue-500/20 text-blue-300",
-      health: "bg-green-500/20 text-green-300",
-      financial: "bg-yellow-500/20 text-yellow-300",
-      creative: "bg-pink-500/20 text-pink-300",
-      spiritual: "bg-indigo-500/20 text-indigo-300",
-      relationships: "bg-rose-500/20 text-rose-300",
-      adventure: "bg-orange-500/20 text-orange-300",
-    };
-    return colors[category] || "bg-muted text-muted-foreground";
-  };
-
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return <Flame className="w-4 h-4 text-red-400" />;
-      case "medium":
-        return <TrendingUp className="w-4 h-4 text-yellow-400" />;
-      default:
-        return <Clock className="w-4 h-4 text-blue-400" />;
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      active: "bg-green-500/20 text-green-300",
-      completed: "bg-blue-500/20 text-blue-300",
-      paused: "bg-yellow-500/20 text-yellow-300",
-      archived: "bg-muted text-muted-foreground",
-    };
-    return styles[status] || "bg-muted text-muted-foreground";
-  };
-
   return (
-    <div className="glass-card p-5 hover:glow-subtle transition-all group">
+    <div className="surface-card p-5 group">
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(dream.category)}`}>
+        <div className="flex items-center gap-1.5">
+          <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${categoryStyles[dream.category] || "bg-muted text-muted-foreground"}`}>
             {dream.category}
           </span>
-          <span className={`text-xs px-2 py-1 rounded-full ${getStatusBadge(dream.status)}`}>
+          <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${statusStyles[dream.status] || "bg-muted text-muted-foreground"}`}>
             {dream.status}
           </span>
         </div>
-        <div className="flex items-center gap-1">
-          {getPriorityIcon(dream.priority)}
+        <div className="flex items-center gap-0.5">
+          {dream.priority === "high" ? <Flame className="w-3.5 h-3.5 text-destructive" /> :
+           dream.priority === "medium" ? <TrendingUp className="w-3.5 h-3.5 text-accent" /> :
+           <Clock className="w-3.5 h-3.5 text-dream-cosmic" />}
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              onToggleFavorite(dream);
-            }}
-            className="p-1 hover:bg-muted rounded transition-colors"
+            onClick={(e) => { e.preventDefault(); onToggleFavorite(dream); }}
+            className="p-1 hover:bg-muted rounded-lg transition-colors"
           >
-            <Star
-              className={`w-4 h-4 ${
-                dream.is_favorite ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"
-              }`}
-            />
+            <Star className={`w-3.5 h-3.5 ${dream.is_favorite ? "text-accent fill-accent" : "text-muted-foreground"}`} />
           </button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 opacity-0 group-hover:opacity-100"
-                onClick={(e) => e.preventDefault()}
-              >
-                <MoreVertical className="w-4 h-4" />
+              <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => e.preventDefault()}>
+                <MoreVertical className="w-3.5 h-3.5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="glass">
+            <DropdownMenuContent align="end" className="glass-card">
               <DropdownMenuItem onClick={() => onEdit(dream)}>
-                <Edit2 className="w-4 h-4 mr-2" />
-                Edit
+                <Edit2 className="w-3.5 h-3.5 mr-2" /> Edit
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onDelete(dream.id)}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
+              <DropdownMenuItem onClick={() => onDelete(dream.id)} className="text-destructive focus:text-destructive">
+                <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -109,14 +78,14 @@ export function DreamCard({ dream, onEdit, onDelete, onToggleFavorite }: DreamCa
       </div>
 
       <Link to={`/dreams/${dream.id}`}>
-        <h3 className="font-display text-lg text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2">
+        <h3 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors mb-1.5 line-clamp-2">
           {dream.title}
         </h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-3 leading-relaxed">
           {dream.description || "No description"}
         </p>
 
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
           {dream.story && (
             <div className="flex items-center gap-1 text-primary">
               <BookOpen className="w-3 h-3" />
@@ -126,7 +95,7 @@ export function DreamCard({ dream, onEdit, onDelete, onToggleFavorite }: DreamCa
           {dream.target_date && (
             <div className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              <span>Target: {new Date(dream.target_date).toLocaleDateString()}</span>
+              <span>{new Date(dream.target_date).toLocaleDateString()}</span>
             </div>
           )}
         </div>
