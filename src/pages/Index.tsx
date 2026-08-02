@@ -47,7 +47,9 @@ const Index = () => {
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-[1] tracking-tight mb-6 fade-in-up" style={{ animationDelay: "0.2s" }}>
               <span className="text-gradient-aurora">Dream Bold.</span>
               <br />
-              <span className="text-shimmer">Share Freely.</span>
+              <span className="text-shimmer">Share Freely</span>
+              <br />
+              <span className="text-shimmer">with dream community</span>
             </h1>
 
             <p className="text-base md:text-lg text-muted-foreground mb-10 max-w-lg mx-auto leading-relaxed fade-in-up" style={{ animationDelay: "0.3s" }}>
