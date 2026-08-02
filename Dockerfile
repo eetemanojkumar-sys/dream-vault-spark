@@ -1,20 +1,21 @@
-# Use official Python image
-FROM python:3.12-slim
+# Stage 1: Build the application
+FROM node:22-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy dependency file
-COPY requirements.txt .
+COPY package*.json ./
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN npm install
 
-# Copy application code
 COPY . .
 
-# Expose application port
-EXPOSE 5000
+RUN npm run build
 
-# Start application
-CMD ["python", "app.py"]
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
