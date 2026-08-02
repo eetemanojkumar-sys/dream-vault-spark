@@ -1,74 +1,139 @@
-# Welcome to your Lovable project
+# 🚀 End-to-End DevOps CI/CD Pipeline for Dream Vault
 
-## Project info
+## 📌 Project Overview
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+This project demonstrates a complete DevOps CI/CD pipeline for deploying a React application to Kubernetes using Jenkins, Docker, Helm, Prometheus, Grafana, and Slack notifications.
 
-## How can I edit this code?
+The pipeline automatically builds, tests, containerizes, pushes the Docker image to Docker Hub, deploys it to Kubernetes, and monitors the application using Prometheus and Grafana.
 
-There are several ways of editing your application 2.
+---
 
-**Use Lovable**
+# 🏗 Architecture
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+Developer
+    │
+    ▼
+GitHub Repository
+    │
+    ▼
+GitHub Webhook
+    │
+    ▼
+Jenkins CI/CD Pipeline
+    │
+    ├── Install Dependencies
+    ├── Build React Application
+    ├── Build Docker Image
+    ├── Push Image to Docker Hub
+    ├── Deploy to Kubernetes
+    └── Slack Notification
+                │
+                ▼
+         Kubernetes (Minikube)
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+  Prometheus        Grafana
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+# 🛠 Tech Stack
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
+- Git
+- GitHub
+- GitHub Webhooks
+- Jenkins
+- Docker
+- Docker Hub
+- Kubernetes (Minikube)
+- Helm
+- Prometheus
+- Grafana
+- Slack
 - React
-- shadcn-ui
-- Tailwind CSS
+- Nginx
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+# ⚙ CI/CD Workflow
 
-## Can I connect a custom domain to my Lovable project?
+1. Developer pushes code to GitHub.
+2. GitHub Webhook triggers Jenkins.
+3. Jenkins installs dependencies.
+4. Jenkins builds the React application.
+5. Docker image is created.
+6. Docker image is pushed to Docker Hub.
+7. Kubernetes deployment is updated.
+8. Pods are automatically rolled out.
+9. Prometheus collects metrics.
+10. Grafana visualizes metrics.
+11. Slack receives deployment notifications.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# 📂 Project Structure
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
-Webhook test Sun Aug  2 15:45:10 UTC 2026
+```
+dream-vault/
+│── Jenkinsfile
+│── Dockerfile
+│── deployment.yaml
+│── service.yaml
+│── package.json
+│── README.md
+│── src/
+│── public/
+```
+
+---
+
+# 📊 Monitoring
+
+- Prometheus for metrics collection
+- Grafana dashboards
+- Kubernetes Node Monitoring
+- Pod Monitoring
+- CPU Monitoring
+- Memory Monitoring
+
+---
+
+# 🚀 Deployment
+
+```bash
+git clone <repository-url>
+
+docker build -t dream-vault .
+
+kubectl apply -f deployment.yaml
+
+kubectl apply -f service.yaml
+```
+
+---
+
+# 📸 Screenshots
+
+- Jenkins Pipeline
+- Docker Hub Repository
+- Kubernetes Pods
+- Grafana Dashboard
+- Prometheus Targets
+- Slack Notifications
+
+(Add screenshots here.)
+
+---
+
+# 👨‍💻 Author
+
+**Manoj Kumar**
+
+DevOps | AWS | Docker | Kubernetes | Jenkins | Terraform | Helm | Prometheus | Grafana
+
+---
+
+⭐ If you found this project useful, don't forget to star the repository.
+
