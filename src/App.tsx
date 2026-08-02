@@ -16,6 +16,7 @@ import Dreams from "./pages/Dreams";
 import DreamDetail from "./pages/DreamDetail";
 import SharedDream from "./pages/SharedDream";
 import Explore from "./pages/Explore";
+import Community from "./pages/Community";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
