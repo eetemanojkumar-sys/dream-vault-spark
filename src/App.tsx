@@ -50,6 +50,8 @@ const AppLayout = () => {
             <Route path="/dreams/:id" element={<PageTransition><DreamDetail /></PageTransition>} />
             <Route path="/shared/:token" element={<PageTransition><SharedDream /></PageTransition>} />
             <Route path="/explore" element={<PageTransition><Explore /></PageTransition>} />
+            <Route path="/community" element={<PageTransition><Community /></PageTransition>} />
+
             <Route path="/profile/:userId" element={<PageTransition><Profile /></PageTransition>} />
             <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
             <Route path="/notifications" element={<PageTransition><Notifications /></PageTransition>} />
